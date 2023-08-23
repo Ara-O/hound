@@ -9,6 +9,7 @@ import (
 func ParseURL(url string, comprehensive bool) (string, error) {
 
 	var baseUrl string
+	var body string
 
 	baseUrl, domain := CleanURL(&url)
 
@@ -21,13 +22,9 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 		colly.AllowedDomains(domain),
 	)
 
-	c.OnHTML("h1", func(e *colly.HTMLElement) {
-		fmt.Println(e.Text)
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		body = e.Text
 	})
-
-	// c.OnHTML("h1", func(e *colly.HTMLElement) {
-	// 	fmt.Println(e.Text)
-	// })
 
 	// c.OnRequest(func(r *colly.Request) {
 	// 	fmt.Println("Visiting", r.URL)
@@ -39,5 +36,5 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 		c.Visit(url)
 	}
 
-	return "", nil
+	return body, nil
 }
