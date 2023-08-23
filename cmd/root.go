@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
 
+	"github.com/ara-o/doc-find/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +16,11 @@ var rootCmd = &cobra.Command{
 	Use:   "doc-find",
 	Short: "Easily query through long pages of documentation!",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(url, comprehensive)
+		_, err := utils.ParseURL(url, comprehensive)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
