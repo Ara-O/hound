@@ -7,19 +7,21 @@ import (
 	"strings"
 )
 
-func CleanURL(urlParamater string) string {
+func CleanURL(urlParameter *string) (string, string) {
 	//Should accept
 	//https://www.araoladipo.tech
 	//www.araoladipo.tech
 	//https://araoladipo.tech
 	//araoladipo.tech
 
-	if !strings.HasPrefix(urlParamater, "https://") && !strings.HasPrefix(urlParamater, "http://") {
-		urlParamater = "https://" + urlParamater
+	if !strings.HasPrefix(*urlParameter, "https://") && !strings.HasPrefix(*urlParameter, "http://") {
+		*urlParameter = "https://" + *urlParameter
 	}
 
+	*urlParameter = strings.ReplaceAll(*urlParameter, "www.", "")
+
 	// Parse the URL.
-	parsedURL, err := url.Parse(urlParamater)
+	parsedURL, err := url.Parse(*urlParameter)
 
 	if err != nil {
 		log.Fatal("Error parsing url")
@@ -28,5 +30,11 @@ func CleanURL(urlParamater string) string {
 	// Build the base URL with scheme and host.
 	baseURL := fmt.Sprintf("%s://%s", parsedURL.Scheme, parsedURL.Host)
 
-	return baseURL
+	domain := parsedURL.Host
+
+	if strings.HasPrefix(parsedURL.Host, "www.") {
+		domain = strings.Replace(parsedURL.Host, "www.", "", 1)
+	}
+
+	return baseURL, domain
 }
