@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -8,6 +9,8 @@ import (
 	"github.com/ara-o/doc-find/utils"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
+	"github.com/tmc/langchaingo/chains"
+	"github.com/tmc/langchaingo/llms/openai"
 	"github.com/tmc/langchaingo/schema"
 	"github.com/tmc/langchaingo/textsplitter"
 )
@@ -32,31 +35,42 @@ var rootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		doc := []schema.Document{schema.Document{
+			PageContent: body,
+			Metadata: map[string]any{
+				"source": url,
+			},
+		}}
+
 		textSplitter := textsplitter.NewRecursiveCharacter()
-		textSplitter.ChunkSize = 500
 		textSplitter.ChunkOverlap = 0
+		textSplitter.ChunkSize = 500
 
-		var test []schema.Document
+		splitDocs, err := textsplitter.SplitDocuments(textSplitter, doc)
 
-		metadata := make(map[string]string)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		textsplitter.CreateDocuments(textSplitter, _, _)
+		llm, err := openai.New()
 
-		test, err = textsplitter.SplitDocuments(textSplitter, test)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		fmt.Println(test[0])
+		stuffQAChain := chains.LoadStuffQA(llm)
 
-		// test, err := textSplitter.SplitText(body)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// fmt.Println(test)
-		//Splitting the docs
-		// splitBody, err := textsplitter.SplitDocuments(textSplitter, body)
+		answer, err := chains.Call(context.Background(), stuffQAChain, map[string]any{
+			"input_documents": splitDocs,
+			"question":        "How can i conditionally render in react?",
+		})
 
-		// openaiVar, err := openai.New()
-		// openaiVar.CreateEmbedding(context.Background(), splitBody)
+		if err != nil {
+			log.Fatal(err)
+		}
 
+		fmt.Println(answer)
+		// retrievalQA.Call(context.TODO(), nil, chains.ChainCallOption{})
 		// fmt.Printf("%+v", splitBody[0])
 		// fmt.Println(body)
 	},
