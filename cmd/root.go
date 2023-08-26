@@ -7,12 +7,16 @@ import (
 	"os"
 
 	"github.com/ara-o/doc-find/utils"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"github.com/tmc/langchaingo/chains"
-	"github.com/tmc/langchaingo/llms/openai"
+	"github.com/tmc/langchaingo/embeddings/openai"
+	l "github.com/tmc/langchaingo/llms/openai"
 	"github.com/tmc/langchaingo/schema"
 	"github.com/tmc/langchaingo/textsplitter"
+	"github.com/tmc/langchaingo/vectorstores"
+	"github.com/tmc/langchaingo/vectorstores/pinecone"
 )
 
 var url string
@@ -29,13 +33,21 @@ var rootCmd = &cobra.Command{
 			log.Fatal("Error loading environment variables")
 		}
 
+		e, err := openai.NewOpenAI()
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ctx := context.Background()
+
 		body, err := utils.ParseURL(url, comprehensive)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		doc := []schema.Document{schema.Document{
+		doc := []schema.Document{{
 			PageContent: body,
 			Metadata: map[string]any{
 				"source": url,
@@ -52,44 +64,44 @@ var rootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		llm, err := openai.New()
+		// Create a new Pinecone vector store.
+		store, err := pinecone.New(
+			ctx,
+			pinecone.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),
+			pinecone.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
+			pinecone.WithEnvironment(os.Getenv("PINECONE_ENVIRONMENT_NAME")),
+			pinecone.WithEmbedder(e),
+			pinecone.WithAPIKey(os.Getenv("PINECONE_API_KEY")),
+			pinecone.WithNameSpace(uuid.New().String()),
+		)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		stuffQAChain := chains.LoadStuffQA(llm)
+		err = store.AddDocuments(ctx, splitDocs)
 
-		/*
-			Goal:
+		if err != nil {
+			log.Fatal(err)
+		}
 
-			const embeddings = new OpenAIEmbeddings();
+		llm, err := l.New()
 
-			const vectorStore = await MemoryVectorStore.fromDocuments(splitDocs, embeddings);
+		if err != nil {
+			fmt.Println(err)
+		}
 
-			const question = await prompt("What question do you want? ")
+		qa := chains.NewRetrievalQAFromLLM(llm, vectorstores.ToRetriever(store, 10))
 
-			const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
-
-			const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-
-			const response = await chain.call({
-			    query: question
-			});
-
-		*/
-
-		answer, err := chains.Call(context.Background(), stuffQAChain, map[string]any{
-			"input_documents": splitDocs,
-			// hard coding the question for now
-			"question": "How can i conditionally render in react?",
+		ans, err := qa.Call(context.Background(), map[string]any{
+			"query": "Imagine this is a question",
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
-		fmt.Println(answer)
+		fmt.Println("ans", ans)
 
 	},
 }
