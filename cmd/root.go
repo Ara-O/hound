@@ -60,9 +60,29 @@ var rootCmd = &cobra.Command{
 
 		stuffQAChain := chains.LoadStuffQA(llm)
 
+		/*
+			Goal:
+
+			const embeddings = new OpenAIEmbeddings();
+
+			const vectorStore = await MemoryVectorStore.fromDocuments(splitDocs, embeddings);
+
+			const question = await prompt("What question do you want? ")
+
+			const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+
+			const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+
+			const response = await chain.call({
+			    query: question
+			});
+
+		*/
+
 		answer, err := chains.Call(context.Background(), stuffQAChain, map[string]any{
 			"input_documents": splitDocs,
-			"question":        "How can i conditionally render in react?",
+			// hard coding the question for now
+			"question": "How can i conditionally render in react?",
 		})
 
 		if err != nil {
@@ -70,9 +90,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		fmt.Println(answer)
-		// retrievalQA.Call(context.TODO(), nil, chains.ChainCallOption{})
-		// fmt.Printf("%+v", splitBody[0])
-		// fmt.Println(body)
+
 	},
 }
 
