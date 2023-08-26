@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gocolly/colly"
+	"github.com/pterm/pterm"
 )
 
 func ParseURL(url string, comprehensive bool) (string, error) {
@@ -13,10 +14,10 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 
 	baseUrl, domain := CleanURL(&url)
 
-	fmt.Println("Base Url -", baseUrl)
-	fmt.Println("Inputted Url -", url)
-	fmt.Println("Domain -", domain)
-	fmt.Println("Comprehensive -", comprehensive)
+	fmt.Println("")
+	pterm.DefaultBasicText.Println("Base URL: ", pterm.LightCyan(baseUrl))
+	pterm.DefaultBasicText.Println("Entered URL: ", pterm.LightCyan(url))
+	pterm.DefaultBasicText.Println("Comprehensive Search: ", pterm.LightCyan(comprehensive))
 
 	c := colly.NewCollector(
 		colly.AllowedDomains(domain),
@@ -26,14 +27,18 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 		body = e.Text
 	})
 
-	// c.OnRequest(func(r *colly.Request) {
-	// 	fmt.Println("Visiting", r.URL)
-	// })
-
 	if comprehensive {
-		c.Visit(baseUrl)
+		// TODO
+		err := c.Visit(baseUrl)
+		if err != nil {
+			return "", err
+		}
+
 	} else {
-		c.Visit(url)
+		err := c.Visit(url)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return body, nil
