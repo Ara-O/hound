@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/ara-o/doc-find/db"
 	"github.com/ara-o/doc-find/utils"
-	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
@@ -28,25 +29,18 @@ var rootCmd = &cobra.Command{
 	Use:   "doc-find",
 	Short: "Easily query through long pages of documentation!",
 	Run: func(cmd *cobra.Command, args []string) {
+		// TODO: change to use other's home dir
 		err := godotenv.Load("/home/ara/go/bin/.env")
 
 		if err != nil {
 			log.Fatal("Error loading environment variables", err)
 		}
 
-		pterm.DefaultBox.
-			WithRightPadding(10).
-			WithLeftPadding(10).
-			WithTopPadding(1).
-			WithBottomPadding(1).
-			WithHorizontalString("═").
-			WithVerticalString("║").
-			WithBottomLeftCornerString("╗").
-			WithBottomRightCornerString("╔").
-			WithTopLeftCornerString("╝").
-			WithTopRightCornerString("╚").
-			Println("Welcome to Doc-Find!")
+		defer db.Close()
 
+		utils.ViewWelcomeLogo()
+
+		//Parse URL
 		parsingURLSpinner, _ := pterm.DefaultSpinner.Start("Parsing URL Data...")
 
 		body, err := utils.ParseURL(url, comprehensive)
@@ -88,7 +82,10 @@ var rootCmd = &cobra.Command{
 
 		creatingStoreSpinner, _ := pterm.DefaultSpinner.Start("Connecting to Vectore Store...")
 
-		// Create a new Pinecone vector store.
+		// Use the namespace of URL to keep documentation separate
+		// If url is not in database, add documents to the store related to that url
+		// If url is in database, no need to add documents, the documents would've been added
+		// The first time, under that URLs namespace
 		store, err := pinecone.New(
 			ctx,
 			pinecone.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),
@@ -96,7 +93,7 @@ var rootCmd = &cobra.Command{
 			pinecone.WithEnvironment(os.Getenv("PINECONE_ENVIRONMENT_NAME")),
 			pinecone.WithEmbedder(e),
 			pinecone.WithAPIKey(os.Getenv("PINECONE_API_KEY")),
-			pinecone.WithNameSpace(uuid.New().String()),
+			pinecone.WithNameSpace(url),
 		)
 
 		if err != nil {
@@ -106,16 +103,30 @@ var rootCmd = &cobra.Command{
 			creatingStoreSpinner.Success("Successfully connected to vector store")
 		}
 
+		// check if url has already been indexed
+		indexExistsInDB := true
 		addingDocumentsSpinner, _ := pterm.DefaultSpinner.Start("Adding documents, this may take a while...")
 
-		err = store.AddDocuments(ctx, splitDocs)
+		if !db.IndexExistsInDB(url) {
+			indexExistsInDB = false
+			err := db.AddIndex(url)
 
-		if err != nil {
-			log.Fatal(err)
-			addingDocumentsSpinner.Fail("Error adding documents")
-		} else {
-			addingDocumentsSpinner.Success("Successfully added documents")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
+
+		//If the index does not exist, add the index
+		if !indexExistsInDB {
+			err = store.AddDocuments(ctx, splitDocs)
+			if err != nil {
+				addingDocumentsSpinner.Fail("Error adding documents")
+				log.Fatal(err)
+
+			}
+		}
+
+		addingDocumentsSpinner.Success("Successfully added documents")
 
 		llm, err := l.New()
 
@@ -126,25 +137,32 @@ var rootCmd = &cobra.Command{
 		qa := chains.NewRetrievalQAFromLLM(llm, vectorstores.ToRetriever(store, 10))
 		_ = qa
 
-		pterm.Println()
+		for {
+			pterm.Println()
 
-		question, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("Input the question you would like answered ").WithMultiLine(false).Show()
+			pterm.Yellow("Note: Type 'end' ( without the quotes ) to end conversation")
 
-		pterm.Println()
+			question, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("Input the question you would like answered [Enter " + pterm.Red("end") + " to end] ").WithMultiLine(true).Show()
 
-		searchingSpinner, _ := pterm.DefaultSpinner.Start("Looking for answer...")
+			if strings.ToLower(strings.TrimSpace(question)) == "end" {
+				break
+			}
 
-		ans, err := qa.Call(context.Background(), map[string]any{
-			"query": question,
-		})
+			pterm.Println()
 
-		if err != nil {
-			searchingSpinner.Fail("Error in looking for answer")
-			log.Fatal(err)
-		} else {
-			searchingSpinner.Success(ans["text"])
+			searchingSpinner, _ := pterm.DefaultSpinner.Start("Looking for answer...")
+
+			ans, err := qa.Call(context.Background(), map[string]any{
+				"query": question,
+			})
+
+			if err != nil {
+				searchingSpinner.Fail("Error in looking for answer")
+				log.Fatal(err)
+			} else {
+				searchingSpinner.Success(ans["text"])
+			}
 		}
-
 	},
 }
 
