@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ara-o/doc-find/db"
-	"github.com/ara-o/doc-find/utils"
+	"github.com/ara-o/hound/db"
+	"github.com/ara-o/hound/utils"
 	"github.com/joho/godotenv"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
@@ -26,7 +26,7 @@ var comprehensive bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "doc-find",
+	Use:   "hound",
 	Short: "Easily query through long pages of documentation!",
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: change to use other's home dir
@@ -142,7 +142,7 @@ var rootCmd = &cobra.Command{
 
 			pterm.Yellow("Note: Type 'end' ( without the quotes ) to end conversation")
 
-			question, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("Input the question you would like answered [Enter " + pterm.Red("end") + " to end] ").WithMultiLine(true).Show()
+			question, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("Input the question you would like answered [Enter " + pterm.Red("end") + " to end] ").WithMultiLine(false).Show()
 
 			if strings.ToLower(strings.TrimSpace(question)) == "end" {
 				break

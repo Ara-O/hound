@@ -14,5 +14,5 @@ func ViewWelcomeLogo() {
 		WithBottomRightCornerString("╔").
 		WithTopLeftCornerString("╝").
 		WithTopRightCornerString("╚").
-		Println("Welcome to Doc-Find!")
+		Println("Welcome to Hound!")
 }

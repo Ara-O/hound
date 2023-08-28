@@ -12,7 +12,7 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 	var baseUrl string
 	var body string
 
-	baseUrl, domain := CleanURL(&url)
+	baseUrl, _ = CleanURL(&url)
 
 	fmt.Println("")
 	pterm.DefaultBasicText.Println("Base URL: ", pterm.LightCyan(baseUrl))
@@ -20,7 +20,7 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 	pterm.DefaultBasicText.Println("Comprehensive Search: ", pterm.LightCyan(comprehensive))
 
 	c := colly.NewCollector(
-		colly.AllowedDomains(domain),
+	// colly.AllowedDomains(domain),
 	)
 
 	c.OnHTML("body", func(e *colly.HTMLElement) {
