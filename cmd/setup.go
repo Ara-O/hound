@@ -16,26 +16,36 @@ var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Set up hound with the proper environment variables",
 	Run: func(cmd *cobra.Command, args []string) {
-		pineconeHasBeenSetup, _ := pterm.DefaultInteractiveConfirm.Show("Have you created a pinecone account?")
+		pineconeHasBeenSetup, _ := pterm.DefaultInteractiveConfirm.Show("Have you created a Pinecone account?")
 
-		if pineconeHasBeenSetup {
-			pterm.DefaultBox.
-				WithRightPadding(10).
-				WithLeftPadding(10).
-				WithBoxStyle(&pterm.Style{pterm.FgGreen}).
-				WithTopPadding(1).
-				WithBottomPadding(1).
-				Println(pterm.Green("Setup Instructions"))
-			pterm.Println("Note: Your information will never be shared and is only stored locally")
-			pterm.Println()
-			pinecone_project_name, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter Pinecone project name: ")
-			pinecone_environment_name, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter Pinecone environment name: ")
-			pinecone_index_name, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter Pinecone index name : ")
-			pinecone_api_key, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter Pinecone api key: ")
-			pterm.Println(pinecone_api_key, pinecone_environment_name, pinecone_project_name, pinecone_index_name)
-		} else {
+		if !pineconeHasBeenSetup {
 			utils.HandlePineconeSetupInstructions()
+			return
 		}
+
+		openaiHasBeenSetup, _ := pterm.DefaultInteractiveConfirm.Show("Have you created an Openai account?")
+
+		if !openaiHasBeenSetup {
+			utils.HandleOpenaiSetupInstructions()
+			return
+		}
+
+		pterm.DefaultBox.
+			WithRightPadding(10).
+			WithLeftPadding(10).
+			WithBoxStyle(&pterm.Style{pterm.FgGreen}).
+			WithTopPadding(1).
+			WithBottomPadding(1).
+			Println(pterm.Green("Setup Instructions"))
+		pterm.Println("Note: Your information will never be shared and is only stored locally")
+		pterm.Println()
+		pinecone_project_id, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter your Pinecone project ID")
+		pinecone_environment_name, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter your Pinecone environment name")
+		pinecone_index_name, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter your Pinecone index name")
+		pinecone_api_key, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter your Pinecone api key")
+		openai_api_key, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show("Enter your Openai api key")
+		pterm.Println(pinecone_api_key, pinecone_environment_name, pinecone_project_id, pinecone_index_name, openai_api_key)
+
 	},
 }
 

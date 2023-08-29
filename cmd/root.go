@@ -30,7 +30,7 @@ var rootCmd = &cobra.Command{
 	Short: "Easily query through long pages of documentation!",
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: change to use other's home dir
-		err := godotenv.Load("/home/ara/go/bin/.env")
+		err := godotenv.Load("./env")
 
 		if err != nil {
 			log.Fatal("Error loading environment variables", err)
@@ -88,7 +88,7 @@ var rootCmd = &cobra.Command{
 		// The first time, under that URLs namespace
 		store, err := pinecone.New(
 			ctx,
-			pinecone.WithProjectName(os.Getenv("PINECONE_PROJECT_NAME")),
+			pinecone.WithProjectName(os.Getenv("PINECONE_PROJECT_ID")),
 			pinecone.WithIndexName(os.Getenv("PINECONE_INDEX_NAME")),
 			pinecone.WithEnvironment(os.Getenv("PINECONE_ENVIRONMENT_NAME")),
 			pinecone.WithEmbedder(e),
