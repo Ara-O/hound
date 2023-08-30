@@ -7,6 +7,8 @@ import (
 )
 
 func GetEnvironmentVariablePath() string {
+	// TODO: Make it a fixed directory so that the code will work regardless of
+	//the director the user is in, also do it in db.go
 	wd, err := os.Getwd()
 
 	if err != nil {

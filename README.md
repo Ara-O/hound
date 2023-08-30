@@ -11,4 +11,10 @@ Imagine a nifty command-line tool that's your go-to sidekick for diving into doc
 - Saves previously queried sites for future reference
 - Easily works with obscure documentation sites
 
-TODO - Make it so that it doesn't only work on my laptop lol
+### How to run
+- Install Golang
+- Clone the repository into an IDE of your choice
+- If you would like an executable, in the terminal run go build . -o hound
+-- This will create an executable file that you can run with the command ./hound in the terminal
+- If you would like to be able to run hound from wherever in your computer [ future me will finish the steps ]
+
