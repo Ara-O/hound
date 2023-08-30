@@ -3,6 +3,8 @@ package db
 import (
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -46,7 +48,15 @@ func init() {
 	var err error
 
 	// TODO: change to use other's home dir
-	db, err = bolt.Open("/home/ara/go/bin/db.db", 0600, nil)
+	wd, err := os.Getwd()
+
+	if err != nil {
+		log.Fatal("Error logging working directory")
+	}
+
+	path := filepath.Join(wd, "db.db")
+
+	db, err = bolt.Open(path, 0600, nil)
 
 	if err != nil {
 		log.Fatal(err)

@@ -29,11 +29,14 @@ var rootCmd = &cobra.Command{
 	Use:   "hound",
 	Short: "Easily query through long pages of documentation!",
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: change to use other's home dir
-		err := godotenv.Load("./env")
+		path := utils.GetEnvironmentVariablePath()
+
+		err := godotenv.Load(path)
 
 		if err != nil {
-			log.Fatal("Error loading environment variables", err)
+			fmt.Println("Error: Error loading environment variables")
+			pterm.Println("Run the", pterm.Sprint(pterm.LightCyan("hound setup")), "command to set up environment variables")
+			return
 		}
 
 		defer db.Close()
