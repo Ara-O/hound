@@ -13,8 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//TODO: Change project id to project name
-
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
@@ -42,7 +40,7 @@ var setupCmd = &cobra.Command{
 
 		pterm.Println()
 		pterm.Println(pterm.LightGreen("Success! All environment variables were successfully stored in ", path))
-		pterm.Println(pterm.LightGreen("You can now run hound 🎉", path))
+		pterm.Println(pterm.LightGreen("You can now run hound 🎉"))
 	},
 }
 
@@ -51,6 +49,7 @@ func init() {
 }
 
 func storeEnvData(path string, data utils.SetupVariables) {
+	os.Create(path)
 
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 

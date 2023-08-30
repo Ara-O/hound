@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
+	"path"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -45,18 +45,26 @@ func AddIndex(url string) error {
 }
 
 func init() {
-	var err error
-
-	// TODO: change to use other's home dir
-	wd, err := os.Getwd()
+	hd, err := os.UserHomeDir()
 
 	if err != nil {
-		log.Fatal("Error logging working directory")
+		log.Fatal("Error getting user home directory")
 	}
 
-	path := filepath.Join(wd, "db.db")
+	folderName := path.Join(hd, "hound")
 
-	db, err = bolt.Open(path, 0600, nil)
+	if _, err := os.Stat(folderName); os.IsNotExist(err) {
+		err := os.Mkdir(folderName, 0755)
+		if err != nil {
+			fmt.Println("Error creating directory:", err)
+			return
+		}
+	}
+
+	dbPath := path.Join(folderName, "db.db")
+	os.Create(dbPath)
+
+	db, err = bolt.Open(dbPath, 0600, nil)
 
 	if err != nil {
 		log.Fatal(err)
