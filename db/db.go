@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -52,6 +53,7 @@ func init() {
 	}
 
 	folderName := path.Join(hd, "hound")
+	dbPath := path.Join(folderName, "db.db")
 
 	if _, err := os.Stat(folderName); os.IsNotExist(err) {
 		err := os.Mkdir(folderName, 0755)
@@ -61,8 +63,10 @@ func init() {
 		}
 	}
 
-	dbPath := path.Join(folderName, "db.db")
-	os.Create(dbPath)
+	//If db.db doesnt exist in the hound folder, create it
+	if _, err := os.Stat(dbPath); errors.Is(err, os.ErrNotExist) {
+		os.Create(dbPath)
+	}
 
 	db, err = bolt.Open(dbPath, 0600, nil)
 

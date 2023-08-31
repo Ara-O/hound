@@ -144,8 +144,8 @@ var rootCmd = &cobra.Command{
 			pterm.Println()
 
 			pterm.Yellow("Note: Type 'end' ( without the quotes ) to end conversation")
-
-			question, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("Input the question you would like answered [Enter " + pterm.Red("end") + " to end] ").WithMultiLine(false).Show()
+			pterm.Println("Enter the question you would like answered [Enter " + pterm.Red("end") + " to end]")
+			question, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("Input").WithMultiLine(false).Show()
 
 			if strings.ToLower(strings.TrimSpace(question)) == "end" {
 				break
