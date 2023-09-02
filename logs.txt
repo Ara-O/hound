@@ -1,0 +1,845 @@
+/articles/
+    
+      
+        
+        Colly
+        
+        Docs
+        
+        Articles
+        
+        Services
+        
+        Datasets
+        
+        GoDoc
+        
+        
+        
+			
+                Colly
+                
+                    
+                        
+                    
+                
+            
+            
+				
+				Docs
+				
+				Articles
+				
+				Services
+				
+				Datasets
+				
+                
+				GoDoc
+				GitHub
+			
+        
+      
+    
+    
+    
+
+
+  
+    
+      
+        
+          
+            
+              Data scraping articles
+              
+                
+                
+                  
+                    
+                        Colly goes 1.0
+                    
+                    2018.05.13 - kvch
+                    Colly v1.0.0 release
+                  
+                
+                
+                
+                  
+                    
+                        The most important HTTP headers for scraping
+                    
+                    2018.01.01 - asciimoo
+                    Scraping related HTTP headers in depth
+                  
+                
+                
+                
+                  
+                    
+                        Free Data Collection Service for Nonprofits
+                    
+                    2017.11.17 - asciimoo
+                    We provide free data collection service to support NGOs and nonprofits
+                  
+                
+                
+                
+                  
+                    
+                        How to Scrape Instagram Profiles
+                    
+                    2017.11.10 - asciimoo
+                    Download all the pictures uploaded to an Instagram profile
+                  
+                
+                
+                
+                  
+                    
+                        Web Scraping Tips and Tricks
+                    
+                    2017.11.04 - kvch
+                    Tips and tricks no one tells you
+                  
+                
+                
+              
+            
+          
+        
+      
+    
+  
+
+
+    
+
+    
+  
+      
+        
+          
+            
+            Contact Us
+            Documentation
+            Services
+            GitHub
+          
+        
+        
+          © 2018 Colly Team
+          Page SourceSite map
+        
+      
+    
+  
+
+
+
+
+$(document).ready(function(){
+	$('.right.menu.open').on("click",function(e){
+        e.preventDefault();
+		$('.ui.vertical.navbar.menu').toggle();
+	});
+
+	$('.ui.dropdown').dropdown();
+});
+
+  
+
+
+
+
+
+
+/docs/
+    
+      
+        
+        Colly
+        
+        Docs
+        
+        Articles
+        
+        Services
+        
+        Datasets
+        
+        GoDoc
+        
+        
+        
+			
+                Colly
+                
+                    
+                        
+                    
+                
+            
+            
+				
+				Docs
+				
+				Articles
+				
+				Services
+				
+				Datasets
+				
+                
+				GoDoc
+				GitHub
+			
+        
+      
+    
+    
+    
+
+
+  
+    
+      Documentation
+      Colly is a Golang framework for building web scrapers. With Colly you can build web scrapers of various complexity, from simple scraper to complex asynchronous website crawlers processing millions of web pages. Colly provides an API for performing network requests and for handling the received content (e.g. interacting with DOM tree of the HTML document).
+Below you will find some of the most common and helpful pages from our documentation.
+
+Installation guide
+Getting started
+Basic scraper example
+
+Also, check out GoDoc for API reference.
+
+    
+  
+
+
+    
+
+    
+  
+      
+        
+          
+            
+            Contact Us
+            Documentation
+            Services
+            GitHub
+          
+        
+        
+          © 2018 Colly Team
+          Page SourceSite map
+        
+      
+    
+  
+
+
+
+
+$(document).ready(function(){
+	$('.right.menu.open').on("click",function(e){
+        e.preventDefault();
+		$('.ui.vertical.navbar.menu').toggle();
+	});
+
+	$('.ui.dropdown').dropdown();
+});
+
+  
+
+
+
+
+
+
+/
+    
+      
+        
+        Colly
+        
+        Docs
+        
+        Articles
+        
+        Services
+        
+        Datasets
+        
+        GoDoc
+        
+        
+        
+			
+                Colly
+                
+                    
+                        
+                    
+                
+            
+            
+				
+				Docs
+				
+				Articles
+				
+				Services
+				
+				Datasets
+				
+                
+				GoDoc
+				GitHub
+			
+        
+      
+    
+    
+    
+
+  
+    
+    Fast and Elegant Scraping Framework for Gophers
+    GitHub
+  
+
+
+  
+    
+      
+        Colly provides a clean interface to write any kind of crawler/scraper/spider
+        With Colly you can easily extract structured data from websites, which can be used for a wide range of applications, like data mining, data processing or archiving.
+        Features
+        
+          Clean API
+          Fast (>1k request/sec on a single core)
+          Manages request delays and maximum concurrency per domain
+          Automatic cookie and session handling
+          Sync/async/parallel scraping
+          Distributed scraping
+          Caching
+          Automatic encoding of non-unicode responses
+          Robots.txt support
+          Google App Engine support
+        
+      
+      
+        
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+
+
+func main() {
+	c := colly.NewCollector()
+
+	// Find and visit all links
+	c.OnHTML("a", func(e *colly.HTMLElement) {
+		e.Request.Visit(e.Attr("href"))
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL)
+	})
+
+	c.Visit("http://go-colly.org/")
+}
+
+
+      
+	
+    
+  
+
+
+    
+        
+            
+                
+                    Batteries included
+            
+            Colly comes with all the tools you need for scraping.
+            Examples
+        
+        
+            
+                
+                Business ready
+            
+            Free for commercial use.
+            License
+        
+        
+            
+                
+                Open Source
+            
+            Development of Colly is community driven and public.
+            Project
+        
+    
+
+
+
+    
+
+    
+  
+      
+        
+          
+            
+            Contact Us
+            Documentation
+            Services
+            GitHub
+          
+        
+        
+          © 2018 Colly Team
+          Page SourceSite map
+        
+      
+    
+  
+
+
+
+
+$(document).ready(function(){
+	$('.right.menu.open').on("click",function(e){
+        e.preventDefault();
+		$('.ui.vertical.navbar.menu').toggle();
+	});
+
+	$('.ui.dropdown').dropdown();
+});
+
+  
+
+
+
+
+
+
+/
+    
+      
+        
+        Colly
+        
+        Docs
+        
+        Articles
+        
+        Services
+        
+        Datasets
+        
+        GoDoc
+        
+        
+        
+			
+                Colly
+                
+                    
+                        
+                    
+                
+            
+            
+				
+				Docs
+				
+				Articles
+				
+				Services
+				
+				Datasets
+				
+                
+				GoDoc
+				GitHub
+			
+        
+      
+    
+    
+    
+
+  
+    
+    Fast and Elegant Scraping Framework for Gophers
+    GitHub
+  
+
+
+  
+    
+      
+        Colly provides a clean interface to write any kind of crawler/scraper/spider
+        With Colly you can easily extract structured data from websites, which can be used for a wide range of applications, like data mining, data processing or archiving.
+        Features
+        
+          Clean API
+          Fast (>1k request/sec on a single core)
+          Manages request delays and maximum concurrency per domain
+          Automatic cookie and session handling
+          Sync/async/parallel scraping
+          Distributed scraping
+          Caching
+          Automatic encoding of non-unicode responses
+          Robots.txt support
+          Google App Engine support
+        
+      
+      
+        
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+
+
+func main() {
+	c := colly.NewCollector()
+
+	// Find and visit all links
+	c.OnHTML("a", func(e *colly.HTMLElement) {
+		e.Request.Visit(e.Attr("href"))
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL)
+	})
+
+	c.Visit("http://go-colly.org/")
+}
+
+
+      
+	
+    
+  
+
+
+    
+        
+            
+                
+                    Batteries included
+            
+            Colly comes with all the tools you need for scraping.
+            Examples
+        
+        
+            
+                
+                Business ready
+            
+            Free for commercial use.
+            License
+        
+        
+            
+                
+                Open Source
+            
+            Development of Colly is community driven and public.
+            Project
+        
+    
+
+
+
+    
+
+    
+  
+      
+        
+          
+            
+            Contact Us
+            Documentation
+            Services
+            GitHub
+          
+        
+        
+          © 2018 Colly Team
+          Page SourceSite map
+        
+      
+    
+  
+
+
+
+
+$(document).ready(function(){
+	$('.right.menu.open').on("click",function(e){
+        e.preventDefault();
+		$('.ui.vertical.navbar.menu').toggle();
+	});
+
+	$('.ui.dropdown').dropdown();
+});
+
+  
+
+
+
+
+
+
+/docs/introduction/install/
+    
+      
+        
+        Colly
+        
+        Docs
+        
+        Articles
+        
+        Services
+        
+        Datasets
+        
+        GoDoc
+        
+        
+        
+			
+                Colly
+                
+                    
+                        
+                    
+                
+            
+            
+				
+				Docs
+				
+				Articles
+				
+				Services
+				
+				Datasets
+				
+                
+				GoDoc
+				GitHub
+			
+        
+      
+    
+    
+    
+
+
+
+  
+  
+    
+      
+      
+        Introduction
+        
+        
+          
+          How to install
+          
+          Getting started
+          
+          Configuration
+          
+        
+        
+      
+      
+      
+        Best Practices
+        
+        
+          
+          Debugging
+          
+          Distributed scraping
+          
+          Storage backend
+          
+          Using multiple collectors
+          
+          Crawler configuration
+          
+          Extensions
+          
+        
+        
+      
+      
+      
+        Examples
+        
+        
+          
+          Basic
+          
+          Error handling
+          
+          Login
+          
+          Max depth
+          
+          Multipart
+          
+          Parallel
+          
+          Proxy switcher
+          
+          Queue
+          
+          Random delay
+          
+          Rate limit
+          
+          Redis backend
+          
+          Request context
+          
+          Scraper server
+          
+          Url filter
+          
+        
+        
+      
+      
+      
+        Real life examples
+        
+        
+          
+          Cryptocoins market capacity
+          
+          Coursera courses
+          
+          Factbase
+          
+          Google groups
+          
+          Hackernews comments
+          
+          Instagram images
+          
+          Openedx courses
+          
+          Reddit
+          
+          Shopify sitemap
+          
+          Xkcd store items
+          
+        
+        
+      
+      
+    
+  
+  
+    
+      
+        
+          
+            How to install
+            
+
+Colly has only one prerequisite and that is Golang programming language. You can install it using their installation guide.
+
+Install Colly
+
+Type following command on Terminal and hit enter to install Colly.
+go get -u github.com/gocolly/colly/...
+          
+        
+      
+    
+  
+  
+
+
+    
+
+    
+  
+      
+        
+          
+            
+            Contact Us
+            Documentation
+            Services
+            GitHub
+          
+        
+        
+          © 2018 Colly Team
+          Page SourceSite map
+        
+      
+    
+  
+
+
+
+
+$(document).ready(function(){
+	$('.right.menu.open').on("click",function(e){
+        e.preventDefault();
+		$('.ui.vertical.navbar.menu').toggle();
+	});
+
+	$('.ui.dropdown').dropdown();
+});
+
+  
+
+
+
+
+
+

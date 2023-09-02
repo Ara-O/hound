@@ -23,6 +23,7 @@ import (
 
 var url string
 var comprehensive bool
+var forceDocumentStorage bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -120,7 +121,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		//If the index does not exist, add the index
-		if !indexExistsInDB {
+		if !indexExistsInDB || forceDocumentStorage {
 			err = store.AddDocuments(ctx, splitDocs)
 			if err != nil {
 				addingDocumentsSpinner.Fail("Error adding documents")
@@ -179,6 +180,7 @@ func Execute() {
 // Set up flags
 func init() {
 	rootCmd.Flags().StringVarP(&url, "url", "u", "", "Enter the URL of the documentation page you want to query")
-	rootCmd.Flags().BoolVarP(&comprehensive, "comprehensive", "c", false, "Select true if you want to search through the entire site's documentation")
+	rootCmd.Flags().BoolVarP(&forceDocumentStorage, "force-storage", "f", false, "Parsed URL data are cached for later re-use. Use this if you want to force the re-storage of already parsed URL sites")
+	rootCmd.Flags().BoolVarP(&comprehensive, "comprehensive", "c", false, "Use if you want to search through the entire site's documentation [Tentative: Goes through a maximum of 10 links]")
 	rootCmd.MarkFlagRequired("url")
 }
