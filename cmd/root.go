@@ -24,6 +24,7 @@ import (
 var url string
 var comprehensive bool
 var forceDocumentStorage bool
+var searchDepth int
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -47,7 +48,7 @@ var rootCmd = &cobra.Command{
 		//Parse URL
 		parsingURLSpinner, _ := pterm.DefaultSpinner.Start("Parsing URL Data...")
 
-		body, err := utils.ParseURL(url, comprehensive)
+		body, err := utils.ParseURL(url, comprehensive, searchDepth)
 
 		//Showing spinner + details
 		if err != nil {
@@ -182,5 +183,6 @@ func init() {
 	rootCmd.Flags().StringVarP(&url, "url", "u", "", "Enter the URL of the documentation page you want to query")
 	rootCmd.Flags().BoolVarP(&forceDocumentStorage, "force-storage", "f", false, "Parsed URL data are cached for later re-use. Use this if you want to force the re-storage of already parsed URL sites")
 	rootCmd.Flags().BoolVarP(&comprehensive, "comprehensive", "c", false, "Use if you want to search through the entire site's documentation [Tentative: Goes through a maximum of 10 links]")
+	rootCmd.Flags().IntVarP(&searchDepth, "depth", "d", 10, "Select how many links to parse when doing a comprehensive search ( Warning: A higher number will result in longer parse times )")
 	rootCmd.MarkFlagRequired("url")
 }

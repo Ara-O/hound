@@ -10,21 +10,21 @@ import (
 	"github.com/pterm/pterm"
 )
 
-func ParseURL(url string, comprehensive bool) (string, error) {
+func ParseURL(url string, comprehensive bool, depth int) (string, error) {
 
 	var baseUrl string
 	var body string
 	var currBody string
-	const MAX_DEPTH = 10
 
 	baseUrl, domain := CleanURL(&url)
 	_ = os.Remove("logs.txt")
 
+	pterm.DefaultBasicText.Println("Base URL: ", pterm.LightCyan(baseUrl))
+	pterm.DefaultBasicText.Println("Entered URL: ", pterm.LightCyan(url))
+	pterm.DefaultBasicText.Println("Comprehensive Search: ", pterm.LightCyan(comprehensive))
+
 	if !comprehensive {
 		fmt.Println("")
-		pterm.DefaultBasicText.Println("Base URL: ", pterm.LightCyan(baseUrl))
-		pterm.DefaultBasicText.Println("Entered URL: ", pterm.LightCyan(url))
-		pterm.DefaultBasicText.Println("Comprehensive Search: ", pterm.LightCyan(comprehensive))
 
 		c := colly.NewCollector()
 
@@ -39,6 +39,8 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 		}
 
 	} else {
+		pterm.DefaultBasicText.Println("Search Depth: ", pterm.LightCyan(depth))
+
 		domainsVisited := 0
 		fmt.Println(domain)
 
@@ -56,7 +58,7 @@ func ParseURL(url string, comprehensive bool) (string, error) {
 		})
 
 		c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-			if domainsVisited == MAX_DEPTH {
+			if domainsVisited == depth {
 				return
 			}
 

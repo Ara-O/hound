@@ -1,844 +1,423 @@
-/articles/
-    
-      
-        
-        Colly
-        
-        Docs
-        
-        Articles
-        
-        Services
-        
-        Datasets
-        
-        GoDoc
-        
-        
-        
-			
-                Colly
-                
-                    
-                        
-                    
-                
-            
-            
-				
-				Docs
-				
-				Articles
-				
-				Services
-				
-				Datasets
-				
-                
-				GoDoc
-				GitHub
-			
-        
-      
-    
-    
-    
+/reference/react
+                (function () {
+                  function setTheme(newTheme) {
+                    window.__theme = newTheme;
+                    if (newTheme === 'dark') {
+                      document.documentElement.classList.add('dark');
+                    } else if (newTheme === 'light') {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  }
+
+                  var preferredTheme;
+                  try {
+                    preferredTheme = localStorage.getItem('theme');
+                  } catch (err) { }
+
+                  window.__setPreferredTheme = function(newTheme) {
+                    preferredTheme = newTheme;
+                    setTheme(newTheme);
+                    try {
+                      localStorage.setItem('theme', newTheme);
+                    } catch (err) { }
+                  };
+
+                  var initialTheme = preferredTheme;
+                  var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                  if (!initialTheme) {
+                    initialTheme = darkQuery.matches ? 'dark' : 'light';
+                  }
+                  setTheme(initialTheme);
+
+                  darkQuery.addEventListener('change', function (e) {
+                    if (!preferredTheme) {
+                      setTheme(e.matches ? 'dark' : 'light');
+                    }
+                  });
+
+                  // Detect whether the browser is Mac to display platform specific content
+                  // An example of such content can be the keyboard shortcut displayed in the search bar
+                  document.documentElement.classList.add(
+                      window.navigator.platform.includes('Mac')
+                      ? "platform-mac" 
+                      : "platform-win"
+                  );
+                })();
+              Support Ukraine 🇺🇦🇺🇦 Help Provide Humanitarian Aid to Ukraine.ReactSearch⌘CtrlKLearnReferenceCommunityBlogreact@18.2.0Hooks useCallback useContext useDebugValue useDeferredValue useEffect useId useImperativeHandle useInsertionEffect useLayoutEffect useMemo useReducer useRef useState useSyncExternalStore useTransition Components <Fragment> (<>) <Profiler> <StrictMode> <Suspense> APIs cache This feature is available in the latest CanarycreateContext forwardRef lazy memo startTransition Directives This feature is available in the latest Canary'use client' This feature is available in the latest Canary'use server' This feature is available in the latest Canaryreact-dom@18.2.0Components Common (e.g. <div>) <input> <option> <progress> <select> <textarea> APIs createPortal flushSync findDOMNode hydrate render unmountComponentAtNode Client APIs createRoot hydrateRoot Server APIs renderToNodeStream renderToPipeableStream renderToReadableStream renderToStaticMarkup renderToStaticNodeStream renderToString Legacy APIsLegacy React APIs Children cloneElement Component createElement createFactory createRef isValidElement PureComponent Is this page useful?API ReferenceBuilt-in React HooksHooks let you use different React features from your components. You can either use the built-in Hooks or combine them to build your own. This page lists all built-in Hooks in React.
+
+State Hooks 
+State lets a component “remember” information like user input. For example, a form component can use state to store the input value, while an image gallery component can use state to store the selected image index.
+To add state to a component, use one of these Hooks:
+
+useState declares a state variable that you can update directly.
+useReducer declares a state variable with the update logic inside a reducer function.
+
+function ImageGallery() {  const [index, setIndex] = useState(0);  // ...
+
+Context Hooks 
+Context lets a component receive information from distant parents without passing it as props. For example, your app’s top-level component can pass the current UI theme to all components below, no matter how deep.
+
+useContext reads and subscribes to a context.
+
+function Button() {  const theme = useContext(ThemeContext);  // ...
+
+Ref Hooks 
+Refs let a component hold some information that isn’t used for rendering, like a DOM node or a timeout ID. Unlike with state, updating a ref does not re-render your component. Refs are an “escape hatch” from the React paradigm. They are useful when you need to work with non-React systems, such as the built-in browser APIs.
+
+useRef declares a ref. You can hold any value in it, but most often it’s used to hold a DOM node.
+useImperativeHandle lets you customize the ref exposed by your component. This is rarely used.
+
+function Form() {  const inputRef = useRef(null);  // ...
+
+Effect Hooks 
+Effects let a component connect to and synchronize with external systems. This includes dealing with network, browser DOM, animations, widgets written using a different UI library, and other non-React code.
+
+useEffect connects a component to an external system.
+
+function ChatRoom({ roomId }) {  useEffect(() => {    const connection = createConnection(roomId);    connection.connect();    return () => connection.disconnect();  }, [roomId]);  // ...
+Effects are an “escape hatch” from the React paradigm. Don’t use Effects to orchestrate the data flow of your application. If you’re not interacting with an external system, you might not need an Effect.
+There are two rarely used variations of useEffect with differences in timing:
+
+useLayoutEffect fires before the browser repaints the screen. You can measure layout here.
+useInsertionEffect fires before React makes changes to the DOM. Libraries can insert dynamic CSS here.
 
 
-  
-    
-      
-        
-          
-            
-              Data scraping articles
-              
-                
-                
-                  
-                    
-                        Colly goes 1.0
-                    
-                    2018.05.13 - kvch
-                    Colly v1.0.0 release
-                  
-                
-                
-                
-                  
-                    
-                        The most important HTTP headers for scraping
-                    
-                    2018.01.01 - asciimoo
-                    Scraping related HTTP headers in depth
-                  
-                
-                
-                
-                  
-                    
-                        Free Data Collection Service for Nonprofits
-                    
-                    2017.11.17 - asciimoo
-                    We provide free data collection service to support NGOs and nonprofits
-                  
-                
-                
-                
-                  
-                    
-                        How to Scrape Instagram Profiles
-                    
-                    2017.11.10 - asciimoo
-                    Download all the pictures uploaded to an Instagram profile
-                  
-                
-                
-                
-                  
-                    
-                        Web Scraping Tips and Tricks
-                    
-                    2017.11.04 - kvch
-                    Tips and tricks no one tells you
-                  
-                
-                
-              
-            
-          
-        
-      
-    
-  
+Performance Hooks 
+A common way to optimize re-rendering performance is to skip unnecessary work. For example, you can tell React to reuse a cached calculation or to skip a re-render if the data has not changed since the previous render.
+To skip calculations and unnecessary re-rendering, use one of these Hooks:
+
+useMemo lets you cache the result of an expensive calculation.
+useCallback lets you cache a function definition before passing it down to an optimized component.
+
+function TodoList({ todos, tab, theme }) {  const visibleTodos = useMemo(() => filterTodos(todos, tab), [todos, tab]);  // ...}
+Sometimes, you can’t skip re-rendering because the screen actually needs to update. In that case, you can improve performance by separating blocking updates that must be synchronous (like typing into an input) from non-blocking updates which don’t need to block the user interface (like updating a chart).
+To prioritize rendering, use one of these Hooks:
+
+useTransition lets you mark a state transition as non-blocking and allow other updates to interrupt it.
+useDeferredValue lets you defer updating a non-critical part of the UI and let other parts update first.
 
 
-    
+Other Hooks 
+These Hooks are mostly useful to library authors and aren’t commonly used in the application code.
 
-    
-  
-      
-        
-          
-            
-            Contact Us
-            Documentation
-            Services
-            GitHub
-          
-        
-        
-          © 2018 Colly Team
-          Page SourceSite map
-        
-      
-    
-  
+useDebugValue lets you customize the label React DevTools displays for your custom Hook.
+useId lets a component associate a unique ID with itself. Typically used with accessibility APIs.
+useSyncExternalStore lets a component subscribe to an external store.
 
 
-
-
-$(document).ready(function(){
-	$('.right.menu.open').on("click",function(e){
-        e.preventDefault();
-		$('.ui.vertical.navbar.menu').toggle();
-	});
-
-	$('.ui.dropdown').dropdown();
-});
-
-  
-
-
-
-
-
-
-/docs/
-    
-      
-        
-        Colly
-        
-        Docs
-        
-        Articles
-        
-        Services
-        
-        Datasets
-        
-        GoDoc
-        
-        
-        
-			
-                Colly
-                
-                    
-                        
-                    
-                
-            
-            
-				
-				Docs
-				
-				Articles
-				
-				Services
-				
-				Datasets
-				
-                
-				GoDoc
-				GitHub
-			
-        
-      
-    
-    
-    
-
-
-  
-    
-      Documentation
-      Colly is a Golang framework for building web scrapers. With Colly you can build web scrapers of various complexity, from simple scraper to complex asynchronous website crawlers processing millions of web pages. Colly provides an API for performing network requests and for handling the received content (e.g. interacting with DOM tree of the HTML document).
-Below you will find some of the most common and helpful pages from our documentation.
-
-Installation guide
-Getting started
-Basic scraper example
-
-Also, check out GoDoc for API reference.
-
-    
-  
-
-
-    
-
-    
-  
-      
-        
-          
-            
-            Contact Us
-            Documentation
-            Services
-            GitHub
-          
-        
-        
-          © 2018 Colly Team
-          Page SourceSite map
-        
-      
-    
-  
-
-
-
-
-$(document).ready(function(){
-	$('.right.menu.open').on("click",function(e){
-        e.preventDefault();
-		$('.ui.vertical.navbar.menu').toggle();
-	});
-
-	$('.ui.dropdown').dropdown();
-});
-
-  
-
-
+Your own Hooks 
+You can also define your own custom Hooks as JavaScript functions.NextuseCallbackHow do you like these docs?Take our survey!©2023Learn ReactQuick StartInstallationDescribing the UIAdding InteractivityManaging StateEscape HatchesAPI ReferenceReact APIsReact DOM APIsCommunityCode of ConductMeet the TeamDocs ContributorsAcknowledgementsMoreBlogReact NativePrivacyTermsOn this pageOverviewState Hooks Context Hooks Ref Hooks Effect Hooks Performance Hooks Other Hooks Your own Hooks {"props":{"pageProps":{"content":"[[\"$r\",\"MaxWidth\",\"last\",{\"children\":[[\"$r\",\"Intro\",null,{\"children\":[\"$r\",\"p\",null,{\"children\":[[\"$r\",\"em\",null,{\"children\":\"Hooks\"}],\" let you use different React features from your components. You can either use the built-in Hooks or combine them to build your own. This page lists all built-in Hooks in React.\"]}]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"state-hooks\",\"children\":\"State Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[[\"$r\",\"em\",null,{\"children\":\"State\"}],\" lets a component \",[\"$r\",\"a\",null,{\"href\":\"/learn/state-a-components-memory\",\"children\":\"“remember” information like user input.\"}],\" For example, a form component can use state to store the input value, while an image gallery component can use state to store the selected image index.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"To add state to a component, use one of these Hooks:\"}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useState\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useState\"}]}],\" declares a state variable that you can update directly.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useReducer\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useReducer\"}]}],\" declares a state variable with the update logic inside a \",[\"$r\",\"a\",null,{\"href\":\"/learn/extracting-state-logic-into-a-reducer\",\"children\":\"reducer function.\"}]]}],\"\\n\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function ImageGallery() {\\n  const [index, setIndex] = useState(0);\\n  // ...\\n\"}]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"context-hooks\",\"children\":\"Context Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[[\"$r\",\"em\",null,{\"children\":\"Context\"}],\" lets a component \",[\"$r\",\"a\",null,{\"href\":\"/learn/passing-props-to-a-component\",\"children\":\"receive information from distant parents without passing it as props.\"}],\" For example, your app’s top-level component can pass the current UI theme to all components below, no matter how deep.\"]}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useContext\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useContext\"}]}],\" reads and subscribes to a context.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function Button() {\\n  const theme = useContext(ThemeContext);\\n  // ...\\n\"}]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"ref-hooks\",\"children\":\"Ref Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[[\"$r\",\"em\",null,{\"children\":\"Refs\"}],\" let a component \",[\"$r\",\"a\",null,{\"href\":\"/learn/referencing-values-with-refs\",\"children\":\"hold some information that isn’t used for rendering,\"}],\" like a DOM node or a timeout ID. Unlike with state, updating a ref does not re-render your component. Refs are an “escape hatch” from the React paradigm. They are useful when you need to work with non-React systems, such as the built-in browser APIs.\"]}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useRef\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useRef\"}]}],\" declares a ref. You can hold any value in it, but most often it’s used to hold a DOM node.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useImperativeHandle\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useImperativeHandle\"}]}],\" lets you customize the ref exposed by your component. This is rarely used.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function Form() {\\n  const inputRef = useRef(null);\\n  // ...\\n\"}]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"effect-hooks\",\"children\":\"Effect Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[[\"$r\",\"em\",null,{\"children\":\"Effects\"}],\" let a component \",[\"$r\",\"a\",null,{\"href\":\"/learn/synchronizing-with-effects\",\"children\":\"connect to and synchronize with external systems.\"}],\" This includes dealing with network, browser DOM, animations, widgets written using a different UI library, and other non-React code.\"]}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useEffect\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useEffect\"}]}],\" connects a component to an external system.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function ChatRoom({ roomId }) {\\n  useEffect(() =\u003e {\\n    const connection = createConnection(roomId);\\n    connection.connect();\\n    return () =\u003e connection.disconnect();\\n  }, [roomId]);\\n  // ...\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Effects are an “escape hatch” from the React paradigm. Don’t use Effects to orchestrate the data flow of your application. If you’re not interacting with an external system, \",[\"$r\",\"a\",null,{\"href\":\"/learn/you-might-not-need-an-effect\",\"children\":\"you might not need an Effect.\"}]]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"There are two rarely used variations of \",[\"$r\",\"code\",null,{\"children\":\"useEffect\"}],\" with differences in timing:\"]}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useLayoutEffect\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useLayoutEffect\"}]}],\" fires before the browser repaints the screen. You can measure layout here.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useInsertionEffect\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useInsertionEffect\"}]}],\" fires before React makes changes to the DOM. Libraries can insert dynamic CSS here.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"performance-hooks\",\"children\":\"Performance Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"A common way to optimize re-rendering performance is to skip unnecessary work. For example, you can tell React to reuse a cached calculation or to skip a re-render if the data has not changed since the previous render.\"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"To skip calculations and unnecessary re-rendering, use one of these Hooks:\"}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useMemo\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useMemo\"}]}],\" lets you cache the result of an expensive calculation.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useCallback\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useCallback\"}]}],\" lets you cache a function definition before passing it down to an optimized component.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function TodoList({ todos, tab, theme }) {\\n  const visibleTodos = useMemo(() =\u003e filterTodos(todos, tab), [todos, tab]);\\n  // ...\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"Sometimes, you can’t skip re-rendering because the screen actually needs to update. In that case, you can improve performance by separating blocking updates that must be synchronous (like typing into an input) from non-blocking updates which don’t need to block the user interface (like updating a chart).\"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"To prioritize rendering, use one of these Hooks:\"}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useTransition\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useTransition\"}]}],\" lets you mark a state transition as non-blocking and allow other updates to interrupt it.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useDeferredValue\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useDeferredValue\"}]}],\" lets you defer updating a non-critical part of the UI and let other parts update first.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"other-hooks\",\"children\":\"Other Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"These Hooks are mostly useful to library authors and aren’t commonly used in the application code.\"}],\"\\n\",[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useDebugValue\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useDebugValue\"}]}],\" lets you customize the label React DevTools displays for your custom Hook.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useId\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useId\"}]}],\" lets a component associate a unique ID with itself. Typically used with accessibility APIs.\"]}],\"\\n\",[\"$r\",\"li\",null,{\"children\":[[\"$r\",\"a\",null,{\"href\":\"/reference/react/useSyncExternalStore\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useSyncExternalStore\"}]}],\" lets a component subscribe to an external store.\"]}],\"\\n\"]}],\"\\n\",[\"$r\",\"hr\",null,{}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"your-own-hooks\",\"children\":\"Your own Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"You can also \",[\"$r\",\"a\",null,{\"href\":\"/learn/reusing-logic-with-custom-hooks#extracting-your-own-custom-hook-from-a-component\",\"children\":\"define your own custom Hooks\"}],\" as JavaScript functions.\"]}]]}]]","toc":"[{\"url\":\"#\",\"text\":\"Overview\",\"depth\":2},{\"url\":\"#state-hooks\",\"depth\":2,\"text\":\"State Hooks \"},{\"url\":\"#context-hooks\",\"depth\":2,\"text\":\"Context Hooks \"},{\"url\":\"#ref-hooks\",\"depth\":2,\"text\":\"Ref Hooks \"},{\"url\":\"#effect-hooks\",\"depth\":2,\"text\":\"Effect Hooks \"},{\"url\":\"#performance-hooks\",\"depth\":2,\"text\":\"Performance Hooks \"},{\"url\":\"#other-hooks\",\"depth\":2,\"text\":\"Other Hooks \"},{\"url\":\"#your-own-hooks\",\"depth\":2,\"text\":\"Your own Hooks \"}]","meta":{"title":"Built-in React Hooks"}},"__N_SSG":true},"page":"/[[...markdownPath]]","query":{"markdownPath":["reference","react"]},"buildId":"58akUxp3bi1gEgszJFmE-","isFallback":false,"gsp":true,"scriptLoader":[]}
 
 
 
 
 /
-    
-      
-        
-        Colly
-        
-        Docs
-        
-        Articles
-        
-        Services
-        
-        Datasets
-        
-        GoDoc
-        
-        
-        
-			
-                Colly
-                
-                    
-                        
-                    
-                
-            
-            
-				
-				Docs
-				
-				Articles
-				
-				Services
-				
-				Datasets
-				
-                
-				GoDoc
-				GitHub
-			
-        
-      
-    
-    
-    
+                (function () {
+                  function setTheme(newTheme) {
+                    window.__theme = newTheme;
+                    if (newTheme === 'dark') {
+                      document.documentElement.classList.add('dark');
+                    } else if (newTheme === 'light') {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  }
 
-  
-    
-    Fast and Elegant Scraping Framework for Gophers
-    GitHub
-  
+                  var preferredTheme;
+                  try {
+                    preferredTheme = localStorage.getItem('theme');
+                  } catch (err) { }
+
+                  window.__setPreferredTheme = function(newTheme) {
+                    preferredTheme = newTheme;
+                    setTheme(newTheme);
+                    try {
+                      localStorage.setItem('theme', newTheme);
+                    } catch (err) { }
+                  };
+
+                  var initialTheme = preferredTheme;
+                  var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                  if (!initialTheme) {
+                    initialTheme = darkQuery.matches ? 'dark' : 'light';
+                  }
+                  setTheme(initialTheme);
+
+                  darkQuery.addEventListener('change', function (e) {
+                    if (!preferredTheme) {
+                      setTheme(e.matches ? 'dark' : 'light');
+                    }
+                  });
+
+                  // Detect whether the browser is Mac to display platform specific content
+                  // An example of such content can be the keyboard shortcut displayed in the search bar
+                  document.documentElement.classList.add(
+                      window.navigator.platform.includes('Mac')
+                      ? "platform-mac" 
+                      : "platform-win"
+                  );
+                })();
+              Support Ukraine 🇺🇦🇺🇦 Help Provide Humanitarian Aid to Ukraine.ReactSearch⌘CtrlKLearnReferenceCommunityBlogReactThe library for web and native user interfacesLearn ReactAPI ReferenceCreate user interfaces from componentsReact lets you build user interfaces out of individual pieces called components. Create your own React components like Thumbnail, LikeButton, and Video. Then combine them into entire screens, pages, and apps.Video.jsfunction Video({ video }) {  return (    <div>      <Thumbnail video={video} />      <a href={video.url}>        <h3>{video.title}</h3>        <p>{video.description}</p>      </a>      <LikeButton video={video} />    </div>  );}My videoVideo descriptionWhether you work on your own or with thousands of other developers, using React feels the same. It is designed to let you seamlessly combine components written by independent people, teams, and organizations.Write components with code and markupReact components are JavaScript functions. Want to show some content conditionally? Use an if statement. Displaying a list? Try array map(). Learning React is learning programming.VideoList.jsfunction VideoList({ videos, emptyHeading }) {  const count = videos.length;  let heading = emptyHeading;  if (count > 0) {    const noun = count > 1 ? 'Videos' : 'Video';    heading = count + ' ' + noun;  }  return (    <section>      <h2>{heading}</h2>      {videos.map(video =>        <Video key={video.id} video={video} />      )}    </section>  );}3 VideosFirst videoVideo descriptionSecond videoVideo descriptionThird videoVideo descriptionThis markup syntax is called JSX. It is a JavaScript syntax extension popularized by React. Putting JSX markup close to related rendering logic makes React components easy to create, maintain, and delete.Add interactivity wherever you need itReact components receive data and return what should appear on the screen. You can pass them new data in response to an interaction, like when the user types into an input. React will then update the screen to match the new data.SearchableVideoList.jsimport { useState } from 'react';function SearchableVideoList({ videos }) {  const [searchText, setSearchText] = useState('');  const foundVideos = filterVideos(videos, searchText);  return (    <>      <SearchInput        value={searchText}        onChange={newText => setSearchText(newText)} />      <VideoList        videos={foundVideos}        emptyHeading={`No matches for “${searchText}”`} />    </>  );}example.com/videos.htmlReact VideosA brief history of ReactSearch5 VideosReact: The DocumentaryThe origin story of ReactRethinking Best PracticesPete Hunt (2013)Introducing React NativeTom Occhino (2015)Introducing React HooksSophie Alpert and Dan Abramov (2018)Introducing Server ComponentsDan Abramov and Lauren Tan (2020)You don’t have to build your whole page in React. Add React to your existing HTML page, and render interactive React components anywhere on it.Add React to your pageGo full-stack with a frameworkReact is a library. It lets you put components together, but it doesn’t prescribe how to do routing and data fetching. To build an entire app with React, we recommend a full-stack React framework like Next.js or Remix.confs/[slug].jsimport { db } from './database.js';import { Suspense } from 'react';async function ConferencePage({ slug }) {  const conf = await db.Confs.find({ slug });  return (    <ConferenceLayout conf={conf}>      <Suspense fallback={<TalksLoading />}>        <Talks confId={conf.id} />      </Suspense>    </ConferenceLayout>  );}async function Talks({ confId }) {  const talks = await db.Talks.findAll({ confId });  const videos = talks.map(talk => talk.video);  return <SearchableVideoList videos={videos} />;}example.com/confs/react-conf-2021React Conf 2021React Conf 2019Search19 VideosReact ConfReact 18 KeynoteThe React TeamReact ConfReact 18 for App DevelopersShruti KapoorReact ConfStreaming Server Rendering with SuspenseShaundai PersonReact ConfThe First React Working GroupAakansha DoshiReact ConfReact Developer ToolingBrian VaughnReact ConfReact without memoXuan Huang (黄玄)React ConfReact Docs KeynoteRachel NaborsReact ConfThings I Learnt from the New React DocsDebbie O'BrienReact ConfLearning in the BrowserSarah RainsbergerReact ConfThe ROI of Designing with ReactLinton YeReact ConfInteractive Playgrounds with ReactDelba de OliveiraReact ConfRe-introducing RelayRobert BalickiReact ConfReact Native DesktopEric Rozell and Steven MoyesReact ConfOn-device Machine Learning for React NativeRoman RädleReact ConfReact 18 for External Store LibrariesDaishi KatoReact ConfBuilding Accessible Components with React 18Diego HazReact ConfAccessible Japanese Form Components with ReactTafu NakazakiReact ConfUI Tools for ArtistsLyle TroxellReact ConfHydrogen + React 18Helen LinReact is also an architecture. Frameworks that implement it let you fetch data in asynchronous components that run on the server or even during the build. Read data from a file or a database, and pass it down to your interactive components.Get started with a frameworkUse the best from every platformPeople love web and native apps for different reasons. React lets you build both web apps and native apps using the same skills. It leans upon each platform’s unique strengths to let your interfaces feel just right on every platform.example.comStay true to the webPeople expect web app pages to load fast. On the server, React lets you start streaming HTML while you’re still fetching data, progressively filling in the remaining content before any JavaScript code loads. On the client, React can use standard web APIs to keep your UI responsive even in the middle of rendering.6:38 PMGo truly nativePeople expect native apps to look and feel like their platform. React Native and Expo let you build apps in React for Android, iOS, and more. They look and feel native because their UIs are truly native. It’s not a web view—your React components render real Android and iOS views provided by the platform.With React, you can be a web and a native developer. Your team can ship to many platforms without sacrificing the user experience. Your organization can bridge the platform silos, and form teams that own entire features end-to-end.Build for native platformsUpgrade when the future is readyReact approaches changes with care. Every React commit is tested on business-critical surfaces with over a billion users. Over 100,000 React components at Meta help validate every migration strategy.The React team is always researching how to improve React. Some research takes years to pay off. React has a high bar for taking a research idea into production. Only proven approaches become a part of React.Read more React newsLatest React NewsReact Canaries: Incremental Feature RolloutMay 3, 2023React Labs: March 2023March 22, 2023Introducing react.devMarch 16, 2023React Labs: June 2022June 15, 2022Read more React newsJoin a community of millionsYou’re not alone. Two million developers from all over the world visit the React docs every month. React is something that people and teams can agree on.This is why React is more than a library, an architecture, or even an ecosystem. React is a community. It’s a place where you can ask for help, find opportunities, and meet new friends. You will meet both developers and designers, beginners and experts, researchers and artists, teachers and students. Our backgrounds may be very different, but React lets us all create user interfaces together.Welcome to the React communityGet Started©2023Learn ReactQuick StartInstallationDescribing the UIAdding InteractivityManaging StateEscape HatchesAPI ReferenceReact APIsReact DOM APIsCommunityCode of ConductMeet the TeamDocs ContributorsAcknowledgementsMoreBlogReact NativePrivacyTerms{"props":{"pageProps":{"content":"[]","toc":"[]","meta":{"id":"home","title":"React","permalink":"index.html"}},"__N_SSG":true},"page":"/[[...markdownPath]]","query":{},"buildId":"58akUxp3bi1gEgszJFmE-","isFallback":false,"gsp":true,"scriptLoader":[]}
 
 
-  
-    
-      
-        Colly provides a clean interface to write any kind of crawler/scraper/spider
-        With Colly you can easily extract structured data from websites, which can be used for a wide range of applications, like data mining, data processing or archiving.
-        Features
-        
-          Clean API
-          Fast (>1k request/sec on a single core)
-          Manages request delays and maximum concurrency per domain
-          Automatic cookie and session handling
-          Sync/async/parallel scraping
-          Distributed scraping
-          Caching
-          Automatic encoding of non-unicode responses
-          Robots.txt support
-          Google App Engine support
-        
-      
-      
-        
-
- 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
 
 
-func main() {
-	c := colly.NewCollector()
+/learn
+                (function () {
+                  function setTheme(newTheme) {
+                    window.__theme = newTheme;
+                    if (newTheme === 'dark') {
+                      document.documentElement.classList.add('dark');
+                    } else if (newTheme === 'light') {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  }
 
-	// Find and visit all links
-	c.OnHTML("a", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
-	})
+                  var preferredTheme;
+                  try {
+                    preferredTheme = localStorage.getItem('theme');
+                  } catch (err) { }
 
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
-	})
+                  window.__setPreferredTheme = function(newTheme) {
+                    preferredTheme = newTheme;
+                    setTheme(newTheme);
+                    try {
+                      localStorage.setItem('theme', newTheme);
+                    } catch (err) { }
+                  };
 
-	c.Visit("http://go-colly.org/")
+                  var initialTheme = preferredTheme;
+                  var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                  if (!initialTheme) {
+                    initialTheme = darkQuery.matches ? 'dark' : 'light';
+                  }
+                  setTheme(initialTheme);
+
+                  darkQuery.addEventListener('change', function (e) {
+                    if (!preferredTheme) {
+                      setTheme(e.matches ? 'dark' : 'light');
+                    }
+                  });
+
+                  // Detect whether the browser is Mac to display platform specific content
+                  // An example of such content can be the keyboard shortcut displayed in the search bar
+                  document.documentElement.classList.add(
+                      window.navigator.platform.includes('Mac')
+                      ? "platform-mac" 
+                      : "platform-win"
+                  );
+                })();
+              Support Ukraine 🇺🇦🇺🇦 Help Provide Humanitarian Aid to Ukraine.ReactSearch⌘CtrlKLearnReferenceCommunityBlogGET STARTEDQuick Start Tutorial: Tic-Tac-Toe Thinking in React Installation Start a New React Project Add React to an Existing Project Editor Setup Using TypeScript React Developer Tools LEARN REACTDescribing the UI Your First Component Importing and Exporting Components Writing Markup with JSX JavaScript in JSX with Curly Braces Passing Props to a Component Conditional Rendering Rendering Lists Keeping Components Pure Adding Interactivity Responding to Events State: A Component's Memory Render and Commit State as a Snapshot Queueing a Series of State Updates Updating Objects in State Updating Arrays in State Managing State Reacting to Input with State Choosing the State Structure Sharing State Between Components Preserving and Resetting State Extracting State Logic into a Reducer Passing Data Deeply with Context Scaling Up with Reducer and Context Escape Hatches Referencing Values with Refs Manipulating the DOM with Refs Synchronizing with Effects You Might Not Need an Effect Lifecycle of Reactive Effects Separating Events from Effects Removing Effect Dependencies Reusing Logic with Custom Hooks Is this page useful?Learn ReactQuick StartWelcome to the React documentation! This page will give you an introduction to the 80% of React concepts that you will use on a daily basis.
+You will learn
+How to create and nest components
+How to add markup and styles
+How to display data
+How to render conditions and lists
+How to respond to events and update the screen
+How to share data between components
+
+Creating and nesting components 
+React apps are made out of components. A component is a piece of the UI (user interface) that has its own logic and appearance. A component can be as small as a button, or as large as an entire page.
+React components are JavaScript functions that return markup:
+function MyButton() {  return (    <button>I'm a button</button>  );}
+Now that you’ve declared MyButton, you can nest it into another component:
+export default function MyApp() {  return (    <div>      <h1>Welcome to my app</h1>      <MyButton />    </div>  );}
+Notice that <MyButton /> starts with a capital letter. That’s how you know it’s a React component. React component names must always start with a capital letter, while HTML tags must be lowercase.
+Have a look at the result:
+App.jsApp.js ResetForkfunction MyButton() {
+  return (
+    <button>
+      I'm a button
+    </button>
+  );
 }
 
-
-      
-	
-    
-  
-
-
-    
-        
-            
-                
-                    Batteries included
-            
-            Colly comes with all the tools you need for scraping.
-            Examples
-        
-        
-            
-                
-                Business ready
-            
-            Free for commercial use.
-            License
-        
-        
-            
-                
-                Open Source
-            
-            Development of Colly is community driven and public.
-            Project
-        
-    
-
-
-
-    
-
-    
-  
-      
-        
-          
-            
-            Contact Us
-            Documentation
-            Services
-            GitHub
-          
-        
-        
-          © 2018 Colly Team
-          Page SourceSite map
-        
-      
-    
-  
-
-
-
-
-$(document).ready(function(){
-	$('.right.menu.open').on("click",function(e){
-        e.preventDefault();
-		$('.ui.vertical.navbar.menu').toggle();
-	});
-
-	$('.ui.dropdown').dropdown();
-});
-
-  
-
-
-
-
-
-
-/
-    
-      
-        
-        Colly
-        
-        Docs
-        
-        Articles
-        
-        Services
-        
-        Datasets
-        
-        GoDoc
-        
-        
-        
-			
-                Colly
-                
-                    
-                        
-                    
-                
-            
-            
-				
-				Docs
-				
-				Articles
-				
-				Services
-				
-				Datasets
-				
-                
-				GoDoc
-				GitHub
-			
-        
-      
-    
-    
-    
-
-  
-    
-    Fast and Elegant Scraping Framework for Gophers
-    GitHub
-  
-
-
-  
-    
-      
-        Colly provides a clean interface to write any kind of crawler/scraper/spider
-        With Colly you can easily extract structured data from websites, which can be used for a wide range of applications, like data mining, data processing or archiving.
-        Features
-        
-          Clean API
-          Fast (>1k request/sec on a single core)
-          Manages request delays and maximum concurrency per domain
-          Automatic cookie and session handling
-          Sync/async/parallel scraping
-          Distributed scraping
-          Caching
-          Automatic encoding of non-unicode responses
-          Robots.txt support
-          Google App Engine support
-        
-      
-      
-        
-
- 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-
-
-func main() {
-	c := colly.NewCollector()
-
-	// Find and visit all links
-	c.OnHTML("a", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
-	})
-
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
-	})
-
-	c.Visit("http://go-colly.org/")
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Welcome to my app</h1>
+      <MyButton />
+    </div>
+  );
 }
 
+Show more
+The export default keywords specify the main component in the file. If you’re not familiar with some piece of JavaScript syntax, MDN and javascript.info have great references.
+Writing markup with JSX 
+The markup syntax you’ve seen above is called JSX. It is optional, but most React projects use JSX for its convenience. All of the tools we recommend for local development support JSX out of the box.
+JSX is stricter than HTML. You have to close tags like <br />. Your component also can’t return multiple JSX tags. You have to wrap them into a shared parent, like a <div>...</div> or an empty <>...</> wrapper:
+function AboutPage() {  return (    <>      <h1>About</h1>      <p>Hello there.<br />How do you do?</p>    </>  );}
+If you have a lot of HTML to port to JSX, you can use an online converter.
+Adding styles 
+In React, you specify a CSS class with className. It works the same way as the HTML class attribute:
+<img className="avatar" />
+Then you write the CSS rules for it in a separate CSS file:
+/* In your CSS */.avatar {  border-radius: 50%;}
+React does not prescribe how you add CSS files. In the simplest case, you’ll add a <link> tag to your HTML. If you use a build tool or a framework, consult its documentation to learn how to add a CSS file to your project.
+Displaying data 
+JSX lets you put markup into JavaScript. Curly braces let you “escape back” into JavaScript so that you can embed some variable from your code and display it to the user. For example, this will display user.name:
+return (  <h1>    {user.name}  </h1>);
+You can also “escape into JavaScript” from JSX attributes, but you have to use curly braces instead of quotes. For example, className="avatar" passes the "avatar" string as the CSS class, but src={user.imageUrl} reads the JavaScript user.imageUrl variable value, and then passes that value as the src attribute:
+return (  <img    className="avatar"    src={user.imageUrl}  />);
+You can put more complex expressions inside the JSX curly braces too, for example, string concatenation:
+App.jsApp.js ResetForkconst user = {
+  name: 'Hedy Lamarr',
+  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
+  imageSize: 90,
+};
 
-      
-	
-    
-  
+export default function Profile() {
+  return (
+    <>
+      <h1>{user.name}</h1>
+      <img
+        className="avatar"
+        src={user.imageUrl}
+        alt={'Photo of ' + user.name}
+        style={{
+          width: user.imageSize,
+          height: user.imageSize
+        }}
+      />
+    </>
+  );
+}
 
+Show more
+In the above example, style={{}} is not a special syntax, but a regular {} object inside the style={ } JSX curly braces. You can use the style attribute when your styles depend on JavaScript variables.
+Conditional rendering 
+In React, there is no special syntax for writing conditions. Instead, you’ll use the same techniques as you use when writing regular JavaScript code. For example, you can use an if statement to conditionally include JSX:
+let content;if (isLoggedIn) {  content = <AdminPanel />;} else {  content = <LoginForm />;}return (  <div>    {content}  </div>);
+If you prefer more compact code, you can use the conditional ? operator. Unlike if, it works inside JSX:
+<div>  {isLoggedIn ? (    <AdminPanel />  ) : (    <LoginForm />  )}</div>
+When you don’t need the else branch, you can also use a shorter logical && syntax:
+<div>  {isLoggedIn && <AdminPanel />}</div>
+All of these approaches also work for conditionally specifying attributes. If you’re unfamiliar with some of this JavaScript syntax, you can start by always using if...else.
+Rendering lists 
+You will rely on JavaScript features like for loop and the array map() function to render lists of components.
+For example, let’s say you have an array of products:
+const products = [  { title: 'Cabbage', id: 1 },  { title: 'Garlic', id: 2 },  { title: 'Apple', id: 3 },];
+Inside your component, use the map() function to transform an array of products into an array of <li> items:
+const listItems = products.map(product =>  <li key={product.id}>    {product.title}  </li>);return (  <ul>{listItems}</ul>);
+Notice how <li> has a key attribute. For each item in a list, you should pass a string or a number that uniquely identifies that item among its siblings. Usually, a key should be coming from your data, such as a database ID. React uses your keys to know what happened if you later insert, delete, or reorder the items.
+App.jsApp.js ResetForkconst products = [
+  { title: 'Cabbage', isFruit: false, id: 1 },
+  { title: 'Garlic', isFruit: false, id: 2 },
+  { title: 'Apple', isFruit: true, id: 3 },
+];
 
-    
-        
-            
-                
-                    Batteries included
-            
-            Colly comes with all the tools you need for scraping.
-            Examples
-        
-        
-            
-                
-                Business ready
-            
-            Free for commercial use.
-            License
-        
-        
-            
-                
-                Open Source
-            
-            Development of Colly is community driven and public.
-            Project
-        
-    
+export default function ShoppingList() {
+  const listItems = products.map(product =>
+    <li
+      key={product.id}
+      style={{
+        color: product.isFruit ? 'magenta' : 'darkgreen'
+      }}
+    >
+      {product.title}
+    </li>
+  );
 
+  return (
+    <ul>{listItems}</ul>
+  );
+}
 
+Show more
+Responding to events 
+You can respond to events by declaring event handler functions inside your components:
+function MyButton() {  function handleClick() {    alert('You clicked me!');  }  return (    <button onClick={handleClick}>      Click me    </button>  );}
+Notice how onClick={handleClick} has no parentheses at the end! Do not call the event handler function: you only need to pass it down. React will call your event handler when the user clicks the button.
+Updating the screen 
+Often, you’ll want your component to “remember” some information and display it. For example, maybe you want to count the number of times a button is clicked. To do this, add state to your component.
+First, import useState from React:
+import { useState } from 'react';
+Now you can declare a state variable inside your component:
+function MyButton() {  const [count, setCount] = useState(0);  // ...
+You’ll get two things from useState: the current state (count), and the function that lets you update it (setCount). You can give them any names, but the convention is to write [something, setSomething].
+The first time the button is displayed, count will be 0 because you passed 0 to useState(). When you want to change state, call setCount() and pass the new value to it. Clicking this button will increment the counter:
+function MyButton() {  const [count, setCount] = useState(0);  function handleClick() {    setCount(count + 1);  }  return (    <button onClick={handleClick}>      Clicked {count} times    </button>  );}
+React will call your component function again. This time, count will be 1. Then it will be 2. And so on.
+If you render the same component multiple times, each will get its own state. Click each button separately:
+App.jsApp.js ResetForkimport { useState } from 'react';
 
-    
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Counters that update separately</h1>
+      <MyButton />
+      <MyButton />
+    </div>
+  );
+}
 
-    
-  
-      
-        
-          
-            
-            Contact Us
-            Documentation
-            Services
-            GitHub
-          
-        
-        
-          © 2018 Colly Team
-          Page SourceSite map
-        
-      
-    
-  
+function MyButton() {
+  const [count, setCount] = useState(0);
 
+  function handleClick() {
+    setCount(count + 1);
+  }
 
+  return (
+    <button onClick={handleClick}>
+      Clicked {count} times
+    </button>
+  );
+}
 
+Show more
+Notice how each button “remembers” its own count state and doesn’t affect other buttons.
+Using Hooks 
+Functions starting with use are called Hooks. useState is a built-in Hook provided by React. You can find other built-in Hooks in the API reference. You can also write your own Hooks by combining the existing ones.
+Hooks are more restrictive than other functions. You can only call Hooks at the top of your components (or other Hooks). If you want to use useState in a condition or a loop, extract a new component and put it there.
+Sharing data between components 
+In the previous example, each MyButton had its own independent count, and when each button was clicked, only the count for the button clicked changed:
+Initially, each MyButton’s count state is 0The first MyButton updates its count to 1
+However, often you’ll need components to share data and always update together.
+To make both MyButton components display the same count and update together, you need to move the state from the individual buttons “upwards” to the closest component containing all of them.
+In this example, it is MyApp:
+Initially, MyApp’s count state is 0 and is passed down to both childrenOn click, MyApp updates its count state to 1 and passes it down to both children
+Now when you click either button, the count in MyApp will change, which will change both of the counts in MyButton. Here’s how you can express this in code.
+First, move the state up from MyButton into MyApp:
+export default function MyApp() {  const [count, setCount] = useState(0);  function handleClick() {    setCount(count + 1);  }  return (    <div>      <h1>Counters that update separately</h1>      <MyButton />      <MyButton />    </div>  );}function MyButton() {  // ... we're moving code from here ...}
+Then, pass the state down from MyApp to each MyButton, together with the shared click handler. You can pass information to MyButton using the JSX curly braces, just like you previously did with built-in tags like <img>:
+export default function MyApp() {  const [count, setCount] = useState(0);  function handleClick() {    setCount(count + 1);  }  return (    <div>      <h1>Counters that update together</h1>      <MyButton count={count} onClick={handleClick} />      <MyButton count={count} onClick={handleClick} />    </div>  );}
+The information you pass down like this is called props. Now the MyApp component contains the count state and the handleClick event handler, and passes both of them down as props to each of the buttons.
+Finally, change MyButton to read the props you have passed from its parent component:
+function MyButton({ count, onClick }) {  return (    <button onClick={onClick}>      Clicked {count} times    </button>  );}
+When you click the button, the onClick handler fires. Each button’s onClick prop was set to the handleClick function inside MyApp, so the code inside of it runs. That code calls setCount(count + 1), incrementing the count state variable. The new count value is passed as a prop to each button, so they all show the new value. This is called “lifting state up”. By moving state up, you’ve shared it between components.
+App.jsApp.js ResetForkimport { useState } from 'react';
 
-$(document).ready(function(){
-	$('.right.menu.open').on("click",function(e){
-        e.preventDefault();
-		$('.ui.vertical.navbar.menu').toggle();
-	});
+export default function MyApp() {
+  const [count, setCount] = useState(0);
 
-	$('.ui.dropdown').dropdown();
-});
+  function handleClick() {
+    setCount(count + 1);
+  }
 
-  
+  return (
+    <div>
+      <h1>Counters that update together</h1>
+      <MyButton count={count} onClick={handleClick} />
+      <MyButton count={count} onClick={handleClick} />
+    </div>
+  );
+}
 
+function MyButton({ count, onClick }) {
+  return (
+    <button onClick={onClick}>
+      Clicked {count} times
+    </button>
+  );
+}
 
-
-
-
-
-/docs/introduction/install/
-    
-      
-        
-        Colly
-        
-        Docs
-        
-        Articles
-        
-        Services
-        
-        Datasets
-        
-        GoDoc
-        
-        
-        
-			
-                Colly
-                
-                    
-                        
-                    
-                
-            
-            
-				
-				Docs
-				
-				Articles
-				
-				Services
-				
-				Datasets
-				
-                
-				GoDoc
-				GitHub
-			
-        
-      
-    
-    
-    
-
-
-
-  
-  
-    
-      
-      
-        Introduction
-        
-        
-          
-          How to install
-          
-          Getting started
-          
-          Configuration
-          
-        
-        
-      
-      
-      
-        Best Practices
-        
-        
-          
-          Debugging
-          
-          Distributed scraping
-          
-          Storage backend
-          
-          Using multiple collectors
-          
-          Crawler configuration
-          
-          Extensions
-          
-        
-        
-      
-      
-      
-        Examples
-        
-        
-          
-          Basic
-          
-          Error handling
-          
-          Login
-          
-          Max depth
-          
-          Multipart
-          
-          Parallel
-          
-          Proxy switcher
-          
-          Queue
-          
-          Random delay
-          
-          Rate limit
-          
-          Redis backend
-          
-          Request context
-          
-          Scraper server
-          
-          Url filter
-          
-        
-        
-      
-      
-      
-        Real life examples
-        
-        
-          
-          Cryptocoins market capacity
-          
-          Coursera courses
-          
-          Factbase
-          
-          Google groups
-          
-          Hackernews comments
-          
-          Instagram images
-          
-          Openedx courses
-          
-          Reddit
-          
-          Shopify sitemap
-          
-          Xkcd store items
-          
-        
-        
-      
-      
-    
-  
-  
-    
-      
-        
-          
-            How to install
-            
-
-Colly has only one prerequisite and that is Golang programming language. You can install it using their installation guide.
-
-Install Colly
-
-Type following command on Terminal and hit enter to install Colly.
-go get -u github.com/gocolly/colly/...
-          
-        
-      
-    
-  
-  
-
-
-    
-
-    
-  
-      
-        
-          
-            
-            Contact Us
-            Documentation
-            Services
-            GitHub
-          
-        
-        
-          © 2018 Colly Team
-          Page SourceSite map
-        
-      
-    
-  
-
-
-
-
-$(document).ready(function(){
-	$('.right.menu.open').on("click",function(e){
-        e.preventDefault();
-		$('.ui.vertical.navbar.menu').toggle();
-	});
-
-	$('.ui.dropdown').dropdown();
-});
-
-  
-
-
+Show more
+Next Steps 
+By now, you know the basics of how to write React code!
+Check out the Tutorial to put them into practice and build your first mini-app with React.NextTutorial: Tic-Tac-ToeHow do you like these docs?Take our survey!©2023Learn ReactQuick StartInstallationDescribing the UIAdding InteractivityManaging StateEscape HatchesAPI ReferenceReact APIsReact DOM APIsCommunityCode of ConductMeet the TeamDocs ContributorsAcknowledgementsMoreBlogReact NativePrivacyTermsOn this pageOverviewCreating and nesting components Writing markup with JSX Adding styles Displaying data Conditional rendering Rendering lists Responding to events Updating the screen Using Hooks Sharing data between components Next Steps {"props":{"pageProps":{"content":"[[\"$r\",\"MaxWidth\",\"20\",{\"children\":[[\"$r\",\"Intro\",null,{\"children\":[\"$r\",\"p\",null,{\"children\":\"Welcome to the React documentation! This page will give you an introduction to the 80% of React concepts that you will use on a daily basis.\"}]}],\"\\n\",[\"$r\",\"YouWillLearn\",null,{\"children\":[\"$r\",\"ul\",null,{\"children\":[\"\\n\",[\"$r\",\"li\",null,{\"children\":\"How to create and nest components\"}],\"\\n\",[\"$r\",\"li\",null,{\"children\":\"How to add markup and styles\"}],\"\\n\",[\"$r\",\"li\",null,{\"children\":\"How to display data\"}],\"\\n\",[\"$r\",\"li\",null,{\"children\":\"How to render conditions and lists\"}],\"\\n\",[\"$r\",\"li\",null,{\"children\":\"How to respond to events and update the screen\"}],\"\\n\",[\"$r\",\"li\",null,{\"children\":\"How to share data between components\"}],\"\\n\"]}]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"components\",\"children\":\"Creating and nesting components \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"React apps are made out of \",[\"$r\",\"em\",null,{\"children\":\"components\"}],\". A component is a piece of the UI (user interface) that has its own logic and appearance. A component can be as small as a button, or as large as an entire page.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"React components are JavaScript functions that return markup:\"}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function MyButton() {\\n  return (\\n    \u003cbutton\u003eI'm a button\u003c/button\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Now that you’ve declared \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\", you can nest it into another component:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{5}\",\"children\":\"export default function MyApp() {\\n  return (\\n    \u003cdiv\u003e\\n      \u003ch1\u003eWelcome to my app\u003c/h1\u003e\\n      \u003cMyButton /\u003e\\n    \u003c/div\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Notice that \",[\"$r\",\"code\",null,{\"children\":\"\u003cMyButton /\u003e\"}],\" starts with a capital letter. That’s how you know it’s a React component. React component names must always start with a capital letter, while HTML tags must be lowercase.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"Have a look at the result:\"}],\"\\n\"]}],[\"$r\",\"Sandpack\",null,{\"children\":[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function MyButton() {\\n  return (\\n    \u003cbutton\u003e\\n      I'm a button\\n    \u003c/button\u003e\\n  );\\n}\\n\\nexport default function MyApp() {\\n  return (\\n    \u003cdiv\u003e\\n      \u003ch1\u003eWelcome to my app\u003c/h1\u003e\\n      \u003cMyButton /\u003e\\n    \u003c/div\u003e\\n  );\\n}\\n\"}]}]}],[\"$r\",\"MaxWidth\",\"58\",{\"children\":[\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"The \",[\"$r\",\"code\",null,{\"children\":\"export default\"}],\" keywords specify the main component in the file. If you’re not familiar with some piece of JavaScript syntax, \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":\"MDN\"}],\" and \",[\"$r\",\"a\",null,{\"href\":\"https://javascript.info/import-export\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":\"javascript.info\"}],\" have great references.\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"writing-markup-with-jsx\",\"children\":\"Writing markup with JSX \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"The markup syntax you’ve seen above is called \",[\"$r\",\"em\",null,{\"children\":\"JSX\"}],\". It is optional, but most React projects use JSX for its convenience. All of the \",[\"$r\",\"a\",null,{\"href\":\"/learn/installation\",\"children\":\"tools we recommend for local development\"}],\" support JSX out of the box.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"JSX is stricter than HTML. You have to close tags like \",[\"$r\",\"code\",null,{\"children\":\"\u003cbr /\u003e\"}],\". Your component also can’t return multiple JSX tags. You have to wrap them into a shared parent, like a \",[\"$r\",\"code\",null,{\"children\":\"\u003cdiv\u003e...\u003c/div\u003e\"}],\" or an empty \",[\"$r\",\"code\",null,{\"children\":\"\u003c\u003e...\u003c/\u003e\"}],\" wrapper:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{3,6}\",\"children\":\"function AboutPage() {\\n  return (\\n    \u003c\u003e\\n      \u003ch1\u003eAbout\u003c/h1\u003e\\n      \u003cp\u003eHello there.\u003cbr /\u003eHow do you do?\u003c/p\u003e\\n    \u003c/\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"If you have a lot of HTML to port to JSX, you can use an \",[\"$r\",\"a\",null,{\"href\":\"https://transform.tools/html-to-jsx\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":\"online converter.\"}]]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"adding-styles\",\"children\":\"Adding styles \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"In React, you specify a CSS class with \",[\"$r\",\"code\",null,{\"children\":\"className\"}],\". It works the same way as the HTML \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/class\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[\"$r\",\"code\",null,{\"children\":\"class\"}]}],\" attribute:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"\u003cimg className=\\\"avatar\\\" /\u003e\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"Then you write the CSS rules for it in a separate CSS file:\"}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-css\",\"children\":\"/* In your CSS */\\n.avatar {\\n  border-radius: 50%;\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"React does not prescribe how you add CSS files. In the simplest case, you’ll add a \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[\"$r\",\"code\",null,{\"children\":\"\u003clink\u003e\"}]}],\" tag to your HTML. If you use a build tool or a framework, consult its documentation to learn how to add a CSS file to your project.\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"displaying-data\",\"children\":\"Displaying data \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"JSX lets you put markup into JavaScript. Curly braces let you “escape back” into JavaScript so that you can embed some variable from your code and display it to the user. For example, this will display \",[\"$r\",\"code\",null,{\"children\":\"user.name\"}],\":\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{3}\",\"children\":\"return (\\n  \u003ch1\u003e\\n    {user.name}\\n  \u003c/h1\u003e\\n);\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"You can also “escape into JavaScript” from JSX attributes, but you have to use curly braces \",[\"$r\",\"em\",null,{\"children\":\"instead of\"}],\" quotes. For example, \",[\"$r\",\"code\",null,{\"children\":\"className=\\\"avatar\\\"\"}],\" passes the \",[\"$r\",\"code\",null,{\"children\":\"\\\"avatar\\\"\"}],\" string as the CSS class, but \",[\"$r\",\"code\",null,{\"children\":\"src={user.imageUrl}\"}],\" reads the JavaScript \",[\"$r\",\"code\",null,{\"children\":\"user.imageUrl\"}],\" variable value, and then passes that value as the \",[\"$r\",\"code\",null,{\"children\":\"src\"}],\" attribute:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{3,4}\",\"children\":\"return (\\n  \u003cimg\\n    className=\\\"avatar\\\"\\n    src={user.imageUrl}\\n  /\u003e\\n);\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"You can put more complex expressions inside the JSX curly braces too, for example, \",[\"$r\",\"a\",null,{\"href\":\"https://javascript.info/operators#string-concatenation-with-binary\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":\"string concatenation\"}],\":\"]}],\"\\n\"]}],[\"$r\",\"Sandpack\",null,{\"children\":[[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"const user = {\\n  name: 'Hedy Lamarr',\\n  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',\\n  imageSize: 90,\\n};\\n\\nexport default function Profile() {\\n  return (\\n    \u003c\u003e\\n      \u003ch1\u003e{user.name}\u003c/h1\u003e\\n      \u003cimg\\n        className=\\\"avatar\\\"\\n        src={user.imageUrl}\\n        alt={'Photo of ' + user.name}\\n        style={{\\n          width: user.imageSize,\\n          height: user.imageSize\\n        }}\\n      /\u003e\\n    \u003c/\u003e\\n  );\\n}\\n\"}]}],[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-css\",\"children\":\".avatar {\\n  border-radius: 50%;\\n}\\n\\n.large {\\n  border: 4px solid gold;\\n}\\n\"}]}]]}],[\"$r\",\"MaxWidth\",\"92\",{\"children\":[\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"In the above example, \",[\"$r\",\"code\",null,{\"children\":\"style={{}}\"}],\" is not a special syntax, but a regular \",[\"$r\",\"code\",null,{\"children\":\"{}\"}],\" object inside the \",[\"$r\",\"code\",null,{\"children\":\"style={ }\"}],\" JSX curly braces. You can use the \",[\"$r\",\"code\",null,{\"children\":\"style\"}],\" attribute when your styles depend on JavaScript variables.\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"conditional-rendering\",\"children\":\"Conditional rendering \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"In React, there is no special syntax for writing conditions. Instead, you’ll use the same techniques as you use when writing regular JavaScript code. For example, you can use an \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[\"$r\",\"code\",null,{\"children\":\"if\"}]}],\" statement to conditionally include JSX:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"let content;\\nif (isLoggedIn) {\\n  content = \u003cAdminPanel /\u003e;\\n} else {\\n  content = \u003cLoginForm /\u003e;\\n}\\nreturn (\\n  \u003cdiv\u003e\\n    {content}\\n  \u003c/div\u003e\\n);\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"If you prefer more compact code, you can use the \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[\"conditional \",[\"$r\",\"code\",null,{\"children\":\"?\"}],\" operator.\"]}],\" Unlike \",[\"$r\",\"code\",null,{\"children\":\"if\"}],\", it works inside JSX:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"\u003cdiv\u003e\\n  {isLoggedIn ? (\\n    \u003cAdminPanel /\u003e\\n  ) : (\\n    \u003cLoginForm /\u003e\\n  )}\\n\u003c/div\u003e\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"When you don’t need the \",[\"$r\",\"code\",null,{\"children\":\"else\"}],\" branch, you can also use a shorter \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND#short-circuit_evaluation\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[\"logical \",[\"$r\",\"code\",null,{\"children\":\"\u0026\u0026\"}],\" syntax\"]}],\":\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"\u003cdiv\u003e\\n  {isLoggedIn \u0026\u0026 \u003cAdminPanel /\u003e}\\n\u003c/div\u003e\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"All of these approaches also work for conditionally specifying attributes. If you’re unfamiliar with some of this JavaScript syntax, you can start by always using \",[\"$r\",\"code\",null,{\"children\":\"if...else\"}],\".\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"rendering-lists\",\"children\":\"Rendering lists \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"You will rely on JavaScript features like \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[[\"$r\",\"code\",null,{\"children\":\"for\"}],\" loop\"]}],\" and the \",[\"$r\",\"a\",null,{\"href\":\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map\",\"target\":\"_blank\",\"rel\":\"nofollow noopener noreferrer\",\"children\":[\"array \",[\"$r\",\"code\",null,{\"children\":\"map()\"}],\" function\"]}],\" to render lists of components.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"For example, let’s say you have an array of products:\"}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"const products = [\\n  { title: 'Cabbage', id: 1 },\\n  { title: 'Garlic', id: 2 },\\n  { title: 'Apple', id: 3 },\\n];\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Inside your component, use the \",[\"$r\",\"code\",null,{\"children\":\"map()\"}],\" function to transform an array of products into an array of \",[\"$r\",\"code\",null,{\"children\":\"\u003cli\u003e\"}],\" items:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"const listItems = products.map(product =\u003e\\n  \u003cli key={product.id}\u003e\\n    {product.title}\\n  \u003c/li\u003e\\n);\\n\\nreturn (\\n  \u003cul\u003e{listItems}\u003c/ul\u003e\\n);\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Notice how \",[\"$r\",\"code\",null,{\"children\":\"\u003cli\u003e\"}],\" has a \",[\"$r\",\"code\",null,{\"children\":\"key\"}],\" attribute. For each item in a list, you should pass a string or a number that uniquely identifies that item among its siblings. Usually, a key should be coming from your data, such as a database ID. React uses your keys to know what happened if you later insert, delete, or reorder the items.\"]}],\"\\n\"]}],[\"$r\",\"Sandpack\",null,{\"children\":[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"const products = [\\n  { title: 'Cabbage', isFruit: false, id: 1 },\\n  { title: 'Garlic', isFruit: false, id: 2 },\\n  { title: 'Apple', isFruit: true, id: 3 },\\n];\\n\\nexport default function ShoppingList() {\\n  const listItems = products.map(product =\u003e\\n    \u003cli\\n      key={product.id}\\n      style={{\\n        color: product.isFruit ? 'magenta' : 'darkgreen'\\n      }}\\n    \u003e\\n      {product.title}\\n    \u003c/li\u003e\\n  );\\n\\n  return (\\n    \u003cul\u003e{listItems}\u003c/ul\u003e\\n  );\\n}\\n\"}]}]}],[\"$r\",\"MaxWidth\",\"124\",{\"children\":[\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"responding-to-events\",\"children\":\"Responding to events \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"You can respond to events by declaring \",[\"$r\",\"em\",null,{\"children\":\"event handler\"}],\" functions inside your components:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{2-4,7}\",\"children\":\"function MyButton() {\\n  function handleClick() {\\n    alert('You clicked me!');\\n  }\\n\\n  return (\\n    \u003cbutton onClick={handleClick}\u003e\\n      Click me\\n    \u003c/button\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Notice how \",[\"$r\",\"code\",null,{\"children\":\"onClick={handleClick}\"}],\" has no parentheses at the end! Do not \",[\"$r\",\"em\",null,{\"children\":\"call\"}],\" the event handler function: you only need to \",[\"$r\",\"em\",null,{\"children\":\"pass it down\"}],\". React will call your event handler when the user clicks the button.\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"updating-the-screen\",\"children\":\"Updating the screen \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Often, you’ll want your component to “remember” some information and display it. For example, maybe you want to count the number of times a button is clicked. To do this, add \",[\"$r\",\"em\",null,{\"children\":\"state\"}],\" to your component.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"First, import \",[\"$r\",\"a\",null,{\"href\":\"/reference/react/useState\",\"children\":[\"$r\",\"code\",null,{\"children\":\"useState\"}]}],\" from React:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"import { useState } from 'react';\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Now you can declare a \",[\"$r\",\"em\",null,{\"children\":\"state variable\"}],\" inside your component:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"function MyButton() {\\n  const [count, setCount] = useState(0);\\n  // ...\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"You’ll get two things from \",[\"$r\",\"code\",null,{\"children\":\"useState\"}],\": the current state (\",[\"$r\",\"code\",null,{\"children\":\"count\"}],\"), and the function that lets you update it (\",[\"$r\",\"code\",null,{\"children\":\"setCount\"}],\"). You can give them any names, but the convention is to write \",[\"$r\",\"code\",null,{\"children\":\"[something, setSomething]\"}],\".\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"The first time the button is displayed, \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" will be \",[\"$r\",\"code\",null,{\"children\":\"0\"}],\" because you passed \",[\"$r\",\"code\",null,{\"children\":\"0\"}],\" to \",[\"$r\",\"code\",null,{\"children\":\"useState()\"}],\". When you want to change state, call \",[\"$r\",\"code\",null,{\"children\":\"setCount()\"}],\" and pass the new value to it. Clicking this button will increment the counter:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{5}\",\"children\":\"function MyButton() {\\n  const [count, setCount] = useState(0);\\n\\n  function handleClick() {\\n    setCount(count + 1);\\n  }\\n\\n  return (\\n    \u003cbutton onClick={handleClick}\u003e\\n      Clicked {count} times\\n    \u003c/button\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"React will call your component function again. This time, \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" will be \",[\"$r\",\"code\",null,{\"children\":\"1\"}],\". Then it will be \",[\"$r\",\"code\",null,{\"children\":\"2\"}],\". And so on.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"If you render the same component multiple times, each will get its own state. Click each button separately:\"}],\"\\n\"]}],[\"$r\",\"Sandpack\",null,{\"children\":[[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"import { useState } from 'react';\\n\\nexport default function MyApp() {\\n  return (\\n    \u003cdiv\u003e\\n      \u003ch1\u003eCounters that update separately\u003c/h1\u003e\\n      \u003cMyButton /\u003e\\n      \u003cMyButton /\u003e\\n    \u003c/div\u003e\\n  );\\n}\\n\\nfunction MyButton() {\\n  const [count, setCount] = useState(0);\\n\\n  function handleClick() {\\n    setCount(count + 1);\\n  }\\n\\n  return (\\n    \u003cbutton onClick={handleClick}\u003e\\n      Clicked {count} times\\n    \u003c/button\u003e\\n  );\\n}\\n\"}]}],[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-css\",\"children\":\"button {\\n  display: block;\\n  margin-bottom: 5px;\\n}\\n\"}]}]]}],[\"$r\",\"MaxWidth\",\"166\",{\"children\":[\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Notice how each button “remembers” its own \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" state and doesn’t affect other buttons.\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"using-hooks\",\"children\":\"Using Hooks \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Functions starting with \",[\"$r\",\"code\",null,{\"children\":\"use\"}],\" are called \",[\"$r\",\"em\",null,{\"children\":\"Hooks\"}],\". \",[\"$r\",\"code\",null,{\"children\":\"useState\"}],\" is a built-in Hook provided by React. You can find other built-in Hooks in the \",[\"$r\",\"a\",null,{\"href\":\"/reference/react\",\"children\":\"API reference.\"}],\" You can also write your own Hooks by combining the existing ones.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Hooks are more restrictive than other functions. You can only call Hooks \",[\"$r\",\"em\",null,{\"children\":\"at the top\"}],\" of your components (or other Hooks). If you want to use \",[\"$r\",\"code\",null,{\"children\":\"useState\"}],\" in a condition or a loop, extract a new component and put it there.\"]}],\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"sharing-data-between-components\",\"children\":\"Sharing data between components \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"In the previous example, each \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\" had its own independent \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\", and when each button was clicked, only the \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" for the button clicked changed:\"]}],\"\\n\",[\"$r\",\"DiagramGroup\",null,{\"children\":[[\"$r\",\"Diagram\",null,{\"name\":\"sharing_data_child\",\"height\":367,\"width\":407,\"alt\":\"Diagram showing a tree of three components, one parent labeled MyApp and two children labeled MyButton. Both MyButton components contain a count with value zero.\",\"children\":[\"$r\",\"p\",null,{\"children\":[\"Initially, each \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\"’s \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" state is \",[\"$r\",\"code\",null,{\"children\":\"0\"}]]}]}],[\"$r\",\"Diagram\",null,{\"name\":\"sharing_data_child_clicked\",\"height\":367,\"width\":407,\"alt\":\"The same diagram as the previous, with the count of the first child MyButton component highlighted indicating a click with the count value incremented to one. The second MyButton component still contains value zero.\",\"children\":[\"$r\",\"p\",null,{\"children\":[\"The first \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\" updates its \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" to \",[\"$r\",\"code\",null,{\"children\":\"1\"}]]}]}]]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"However, often you’ll need components to \",[\"$r\",\"em\",null,{\"children\":\"share data and always update together\"}],\".\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"To make both \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\" components display the same \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" and update together, you need to move the state from the individual buttons “upwards” to the closest component containing all of them.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"In this example, it is \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\":\"]}],\"\\n\",[\"$r\",\"DiagramGroup\",null,{\"children\":[[\"$r\",\"Diagram\",null,{\"name\":\"sharing_data_parent\",\"height\":385,\"width\":410,\"alt\":\"Diagram showing a tree of three components, one parent labeled MyApp and two children labeled MyButton. MyApp contains a count value of zero which is passed down to both of the MyButton components, which also show value zero.\",\"children\":[\"$r\",\"p\",null,{\"children\":[\"Initially, \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\"’s \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" state is \",[\"$r\",\"code\",null,{\"children\":\"0\"}],\" and is passed down to both children\"]}]}],[\"$r\",\"Diagram\",null,{\"name\":\"sharing_data_parent_clicked\",\"height\":385,\"width\":410,\"alt\":\"The same diagram as the previous, with the count of the parent MyApp component highlighted indicating a click with the value incremented to one. The flow to both of the children MyButton components is also highlighted, and the count value in each child is set to one indicating the value was passed down.\",\"children\":[\"$r\",\"p\",null,{\"children\":[\"On click, \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\" updates its \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" state to \",[\"$r\",\"code\",null,{\"children\":\"1\"}],\" and passes it down to both children\"]}]}]]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Now when you click either button, the \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" in \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\" will change, which will change both of the counts in \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\". Here’s how you can express this in code.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"First, \",[\"$r\",\"em\",null,{\"children\":\"move the state up\"}],\" from \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\" into \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\":\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{2-6,18}\",\"children\":\"export default function MyApp() {\\n  const [count, setCount] = useState(0);\\n\\n  function handleClick() {\\n    setCount(count + 1);\\n  }\\n\\n  return (\\n    \u003cdiv\u003e\\n      \u003ch1\u003eCounters that update separately\u003c/h1\u003e\\n      \u003cMyButton /\u003e\\n      \u003cMyButton /\u003e\\n    \u003c/div\u003e\\n  );\\n}\\n\\nfunction MyButton() {\\n  // ... we're moving code from here ...\\n}\\n\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Then, \",[\"$r\",\"em\",null,{\"children\":\"pass the state down\"}],\" from \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\" to each \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\", together with the shared click handler. You can pass information to \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\" using the JSX curly braces, just like you previously did with built-in tags like \",[\"$r\",\"code\",null,{\"children\":\"\u003cimg\u003e\"}],\":\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{11-12}\",\"children\":\"export default function MyApp() {\\n  const [count, setCount] = useState(0);\\n\\n  function handleClick() {\\n    setCount(count + 1);\\n  }\\n\\n  return (\\n    \u003cdiv\u003e\\n      \u003ch1\u003eCounters that update together\u003c/h1\u003e\\n      \u003cMyButton count={count} onClick={handleClick} /\u003e\\n      \u003cMyButton count={count} onClick={handleClick} /\u003e\\n    \u003c/div\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"The information you pass down like this is called \",[\"$r\",\"em\",null,{\"children\":\"props\"}],\". Now the \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\" component contains the \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" state and the \",[\"$r\",\"code\",null,{\"children\":\"handleClick\"}],\" event handler, and \",[\"$r\",\"em\",null,{\"children\":\"passes both of them down as props\"}],\" to each of the buttons.\"]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Finally, change \",[\"$r\",\"code\",null,{\"children\":\"MyButton\"}],\" to \",[\"$r\",\"em\",null,{\"children\":\"read\"}],\" the props you have passed from its parent component:\"]}],\"\\n\",[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"meta\":\"{1,3}\",\"children\":\"function MyButton({ count, onClick }) {\\n  return (\\n    \u003cbutton onClick={onClick}\u003e\\n      Clicked {count} times\\n    \u003c/button\u003e\\n  );\\n}\\n\"}]}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"When you click the button, the \",[\"$r\",\"code\",null,{\"children\":\"onClick\"}],\" handler fires. Each button’s \",[\"$r\",\"code\",null,{\"children\":\"onClick\"}],\" prop was set to the \",[\"$r\",\"code\",null,{\"children\":\"handleClick\"}],\" function inside \",[\"$r\",\"code\",null,{\"children\":\"MyApp\"}],\", so the code inside of it runs. That code calls \",[\"$r\",\"code\",null,{\"children\":\"setCount(count + 1)\"}],\", incrementing the \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" state variable. The new \",[\"$r\",\"code\",null,{\"children\":\"count\"}],\" value is passed as a prop to each button, so they all show the new value. This is called “lifting state up”. By moving state up, you’ve shared it between components.\"]}],\"\\n\"]}],[\"$r\",\"Sandpack\",null,{\"children\":[[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-js\",\"children\":\"import { useState } from 'react';\\n\\nexport default function MyApp() {\\n  const [count, setCount] = useState(0);\\n\\n  function handleClick() {\\n    setCount(count + 1);\\n  }\\n\\n  return (\\n    \u003cdiv\u003e\\n      \u003ch1\u003eCounters that update together\u003c/h1\u003e\\n      \u003cMyButton count={count} onClick={handleClick} /\u003e\\n      \u003cMyButton count={count} onClick={handleClick} /\u003e\\n    \u003c/div\u003e\\n  );\\n}\\n\\nfunction MyButton({ count, onClick }) {\\n  return (\\n    \u003cbutton onClick={onClick}\u003e\\n      Clicked {count} times\\n    \u003c/button\u003e\\n  );\\n}\\n\"}]}],[\"$r\",\"pre\",null,{\"children\":[\"$r\",\"code\",null,{\"className\":\"language-css\",\"children\":\"button {\\n  display: block;\\n  margin-bottom: 5px;\\n}\\n\"}]}]]}],[\"$r\",\"MaxWidth\",\"last\",{\"children\":[\"\\n\",[\"$r\",\"h2\",null,{\"id\":\"next-steps\",\"children\":\"Next Steps \"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":\"By now, you know the basics of how to write React code!\"}],\"\\n\",[\"$r\",\"p\",null,{\"children\":[\"Check out the \",[\"$r\",\"a\",null,{\"href\":\"/learn/tutorial-tic-tac-toe\",\"children\":\"Tutorial\"}],\" to put them into practice and build your first mini-app with React.\"]}]]}]]","toc":"[{\"url\":\"#\",\"text\":\"Overview\",\"depth\":2},{\"url\":\"#components\",\"depth\":2,\"text\":\"Creating and nesting components \"},{\"url\":\"#writing-markup-with-jsx\",\"depth\":2,\"text\":\"Writing markup with JSX \"},{\"url\":\"#adding-styles\",\"depth\":2,\"text\":\"Adding styles \"},{\"url\":\"#displaying-data\",\"depth\":2,\"text\":\"Displaying data \"},{\"url\":\"#conditional-rendering\",\"depth\":2,\"text\":\"Conditional rendering \"},{\"url\":\"#rendering-lists\",\"depth\":2,\"text\":\"Rendering lists \"},{\"url\":\"#responding-to-events\",\"depth\":2,\"text\":\"Responding to events \"},{\"url\":\"#updating-the-screen\",\"depth\":2,\"text\":\"Updating the screen \"},{\"url\":\"#using-hooks\",\"depth\":2,\"text\":\"Using Hooks \"},{\"url\":\"#sharing-data-between-components\",\"depth\":2,\"text\":\"Sharing data between components \"},{\"url\":\"#next-steps\",\"depth\":2,\"text\":\"Next Steps \"}]","meta":{"title":"Quick Start"}},"__N_SSG":true},"page":"/[[...markdownPath]]","query":{"markdownPath":["learn"]},"buildId":"58akUxp3bi1gEgszJFmE-","isFallback":false,"gsp":true,"scriptLoader":[]}
 
 
 
