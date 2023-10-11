@@ -12,7 +12,7 @@ Imagine a nifty command-line tool that's your go-to sidekick for diving into doc
 - Easily works with obscure documentation sites
 
 ### How to run
-- Install Golang
+- Install Golang - the latest version preferably
 - Clone the repository into an IDE of your choice
 - If you would like an executable, in the terminal run go build . -o hound
 -- This will create an executable file that you can run with the command ./hound in the terminal
