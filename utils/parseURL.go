@@ -30,10 +30,17 @@ func ParseURL(url string, comprehensive bool, depth int) (string, error) {
 
 		c.OnHTML("body", func(e *colly.HTMLElement) {
 			body = strings.ReplaceAll(strings.ReplaceAll(e.Text, "\t", ""), "\n", "")
+
+			file, err := os.OpenFile("./logs.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			if err != nil {
+				log.Fatal(err)
+			}
+			file.Write([]byte(body))
+
+			defer file.Close()
 		})
 
-		// TODO
-		err := c.Visit(baseUrl)
+		err := c.Visit(url)
 		if err != nil {
 			return "", err
 		}
@@ -69,7 +76,7 @@ func ParseURL(url string, comprehensive bool, depth int) (string, error) {
 			currBody = e.Text
 			body += e.Text
 
-			file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			file, err := os.OpenFile("./logs.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 			if err != nil {
 				log.Fatal(err)
 			}
